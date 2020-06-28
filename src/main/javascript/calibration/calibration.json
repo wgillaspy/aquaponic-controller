@@ -1,0 +1,24 @@
+{
+  "pH": {
+    "whole_numbers" : false,
+    "decimals" : 3,
+    "total_points" : 250,
+    "calibration_points" : [
+      0, 0,
+      3.89, 4,
+      6.79, 7,
+      9.55, 10,
+      14, 14
+    ]
+  },
+  "conductivity": {
+    "whole_numbers" : true,
+    "total_points" : 500,
+    "calibration_points": [
+      0,  0,
+      14390,  12880,
+      80000,  92950,
+      120000, 120000
+    ]
+  }
+}

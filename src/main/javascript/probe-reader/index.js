@@ -6,6 +6,12 @@ const conductivityAddress = 0x100;
 const ICT_SLAVE = 0x703;
 
 const i2c1 = i2c.openSync(1);
-const rawData = i2c1.readWordSync(MCP9808_ADDR, TEMP_REG);
+
+
+const wbuf = Buffer.from([0x52]);
+i2c1.writeWordSync(phAddress, wbuf);
+
+
+const rawData = i2c1.readWordSync(phAddress, ICT_SLAVE);
 console.log(rawData);
 i2c1.closeSync();

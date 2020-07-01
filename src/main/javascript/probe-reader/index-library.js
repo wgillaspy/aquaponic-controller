@@ -13,6 +13,10 @@ const functions = {
         });
     },
 
+    "readConfiguredProbesSync" : async () => {
+        const result = await functions.readConfiguredProbes();
+        return result;
+    },
     "readConfiguredProbes": async () => {
 
         const configuration = fs.readJsonSync('./configuration.json', 'utf8');

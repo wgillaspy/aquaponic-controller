@@ -1,6 +1,6 @@
 const library = require("./index-library");
 
-const result = library.readConfiguredProbes();
+const result = library.readConfiguredProbesSync();
 
 console.log(result);
 

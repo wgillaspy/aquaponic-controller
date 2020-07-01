@@ -1,0 +1,23 @@
+{
+  "loop_time_in_milis": 10000,
+  "commands": {
+    "read": {
+      "cmd": "R",
+      "byte": true
+    },
+    "calibrate_high": {
+      "cmd": "R",
+      "byte": true
+    }
+  },
+  "probes": [
+    {
+      "name": "pH",
+      "address": 99
+    },
+    {
+      "name": "conductivity",
+      "address": 100
+    }
+  ]
+}

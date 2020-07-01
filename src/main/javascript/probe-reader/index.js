@@ -1,19 +1,34 @@
 const i2c = require('i2c-bus');
-
-const i2c1 = i2c.openSync(1);
-
-const ATLAS_DEVICE_ADDR = 100 
-console.log("ATLAS_DEVICE_ADDR: " + ATLAS_DEVICE_ADDR);
+const fs = require("fs-extra");
 
 const BUFFER_LENGTH = 32;
+const INFO_CMD = 0x49;
+const READ_CMD = 0x52;
 
-i2c1.sendByteSync(ATLAS_DEVICE_ADDR,0x52); //SEND ATLAS INFO REQUEST
+const configuration = fs.readJsonSync('./configuration.json', 'utf8');
 
-setTimeout(function () {
+setTimeout(readProbesInConfiguration(), configuration.loop_time_in_milis);
 
-   let PH_OUTPUT_INFO = new Buffer(BUFFER_LENGTH);
-   i2c1.i2cReadSync(ATLAS_DEVICE_ADDR, BUFFER_LENGTH, PH_OUTPUT_INFO);
-   console.log(PH_OUTPUT_INFO.toString("ascii"));
-   i2c1.closeSync();
+function readProbesInConfiguration() {
 
-}, 1000);
+    const i2c1 = i2c.openSync(1);
+
+    for (const probe of configuration.probes) {
+
+        console.log("Probe: " + probe.address);
+
+        i2c1.sendByteSync(probe.address, 0x52);
+
+        setTimeout(function () {
+
+            let outputBuffer = new Buffer(BUFFER_LENGTH);
+            i2c1.i2cReadSync(probe.address, BUFFER_LENGTH, outputBuffer);
+            console.log(outputBuffer.toString("ascii"));
+
+        }, 1000);
+
+    }
+
+    i2c1.closeSync();
+
+}

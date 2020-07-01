@@ -14,8 +14,7 @@ const functions = {
     },
 
     "readConfiguredProbesSync" : async () => {
-        const result = await functions.readConfiguredProbes();
-        return Promise.resolve(result)
+        return await functions.readConfiguredProbes();
     },
     "readConfiguredProbes": async () => {
 
@@ -34,7 +33,12 @@ const functions = {
 
             const outputBuffer = new Buffer(BUFFER_LENGTH);
             i2c1.i2cReadSync(probe.address, BUFFER_LENGTH, outputBuffer);
-            objectToReturn[probe.name] = outputBuffer.toString("ascii");
+
+            const resultString = outputBuffer.toString("ascii");
+
+            console.log(resultString);
+
+            objectToReturn[probe.name] = resultString;
         }
         i2c1.closeSync();
         return objectToReturn;

@@ -22,8 +22,6 @@ const functions = {
         const i2c1 = i2c.openSync(1);
         for (const probe of configuration.probes) {
 
-            await previous_promise;
-
             console.log("Probe: " + probe.address);
 
             i2c1.sendByteSync(probe.address, 0x52);

@@ -34,7 +34,7 @@ const functions = {
             const outputBuffer = new Buffer(BUFFER_LENGTH);
             i2c1.i2cReadSync(probe.address, BUFFER_LENGTH, outputBuffer);
 
-            const resultString = outputBuffer.toString("ascii").replace(/^[\s\uFEFF\xA0\0]+|[\s\uFEFF\xA0\0]+$/g, "");
+            const resultString = outputBuffer.toString("ascii").replace(/\0/g, '');
 
             console.log(resultString);
 

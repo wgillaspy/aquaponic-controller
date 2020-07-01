@@ -1,17 +1,19 @@
 const i2c = require('i2c-bus');
 
-const phAddress = 0x99;
-const conductivityAddress = 0x100;
-
-const ICT_SLAVE = 0x703;
-
 const i2c1 = i2c.openSync(1);
 
+const ATLAS_DEVICE_ADDR = 100 
+console.log("ATLAS_DEVICE_ADDR: " + ATLAS_DEVICE_ADDR);
 
-const wbuf = Buffer.from([0x52]);
-i2c1.writeWordSync(phAddress, wbuf);
+const BUFFER_LENGTH = 32;
 
+i2c1.sendByteSync(ATLAS_DEVICE_ADDR,0x52); //SEND ATLAS INFO REQUEST
 
-const rawData = i2c1.readWordSync(phAddress, ICT_SLAVE);
-console.log(rawData);
-i2c1.closeSync();
+setTimeout(function () {
+
+   let PH_OUTPUT_INFO = new Buffer(BUFFER_LENGTH);
+   i2c1.i2cReadSync(ATLAS_DEVICE_ADDR, BUFFER_LENGTH, PH_OUTPUT_INFO);
+   console.log(PH_OUTPUT_INFO.toString("ascii"));
+   i2c1.closeSync();
+
+}, 1000);

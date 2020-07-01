@@ -15,7 +15,7 @@ const functions = {
 
     "readConfiguredProbesSync" : async () => {
         const result = await functions.readConfiguredProbes();
-        return result;
+        return Promise.resolve(result)
     },
     "readConfiguredProbes": async () => {
 

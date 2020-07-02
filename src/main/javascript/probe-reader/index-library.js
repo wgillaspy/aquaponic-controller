@@ -1,5 +1,6 @@
 const i2c = require('i2c-bus');
 const fs = require("fs-extra");
+const axios = require("axios");
 
 const BUFFER_LENGTH = 32;
 const INFO_CMD = 0x49;

@@ -52,8 +52,7 @@ const functions = {
             };
 
             axios.post(process.env.SPLUNK_URL, eventObject, axiosConfig).then(response => {
-                console.log("Splunk result:")
-                console.log(response.data);
+                console.log(`Splunk result: ${response.data.text}` );
             }).catch(error => {
                 console.log(error);
             });

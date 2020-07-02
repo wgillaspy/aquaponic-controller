@@ -13,7 +13,7 @@ const functions = {
         });
     },
 
-    "readConfiguredProbesSync" : async () => {
+    "readConfiguredProbesSync": async () => {
         return await functions.readConfiguredProbes();
     },
     "readConfiguredProbes": async () => {
@@ -38,6 +38,28 @@ const functions = {
         }
         i2c1.closeSync();
         return objectToReturn;
+    },
+    "writeSplunkData": (json) => {
+
+        try {
+            const eventObject = {"event": json};
+
+            const axiosConfig = {
+                headers: {
+                    "Authorization": "Splunk " + process.env.SPLUNK_TOKEN
+                }
+            };
+
+            axios.post(process.env.SPLUNK_URL, eventObject, axiosConfig).then(response => {
+                console.log(response);
+            }).catch(error => {
+                console.log(error);
+            });
+
+        } catch (splunkWriteDataError) {
+            console.log("splunkWriteDataError:");
+            console.log(splunkWriteDataError)
+        }
     }
 };
 

@@ -40,6 +40,12 @@ pipeline {
 
                                 ls -ltra
 
+                                cat Dockerfile | mo > Dockerfile.tmp
+                                mv Dockerfile.tmp Dockerfile
+                                
+                                cat deploy-container.json | mo > deploy-container.json.tmp
+                                mv deploy-container.json.tmp deploy-container.json
+
                                 docker build . -t ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
 
                                 
@@ -47,11 +53,6 @@ pipeline {
                                 #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}/stop ${FLAGS}
                                 #curl -X DELETE https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}?v=${IMAGE_TAG} ${FLAGS}
         
-                                #cat deploy-container.json | mo > deploy-container.json.tmp
-                                #mv deploy-container.json.tmp deploy-container.json
-    
-                                #cat Dockerfile | mo > Dockerfile.tmp
-                                #mv Dockerfile.tmp Dockerfile
     
                                 #tar -cvf controller.tar package.json package-lock.json index.js ${NODEJS_DOWNLOAD_FILENAME} Dockerfile
         

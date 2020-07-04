@@ -50,15 +50,15 @@ pipeline {
                                 unset DOCKER_TLS_VERIFY
 
                                 docker build . -t ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
+                                docker push ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
 
+                                cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
                                 export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
                                 export DOCKER_TLS_VERIFY=1
 
-                                echo $DOCKER_HOST
-                                 
-                                cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
-
                                 docker ps
+                                docker stop ${CONTAINER_NAME} || true
+                                docker pull ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
                                     
                                 #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}/stop ${FLAGS}
                                 #curl -X DELETE https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}?v=${IMAGE_TAG} ${FLAGS}

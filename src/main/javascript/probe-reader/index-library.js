@@ -84,6 +84,7 @@ const functions = {
             if (currentState !== desiredState) {
 
                 let endpoint = "";
+                let data = 0;
 
                 if (desiredState === "off") {
 
@@ -92,11 +93,13 @@ const functions = {
                 } else if (desiredState === "on") {
 
                     endpoint = "/api/services/light/turn_on"
+                    data = 1;
                 }
 
                 if (endpoint) {
                     axios.post("http://" +  process.env.HOME_ASSISTANT_API + endpoint, jsonToWrite, axiosConfig).then(offResult => {
                         console.log(JSON.stringify(offResult.data, null, 2));
+                        functions.writeSplunkData({"deviceName" : desiredState })
                     }).catch(offExecption => {
                         console.log(offExecption);
                     });

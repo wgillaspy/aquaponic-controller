@@ -1,0 +1,21 @@
+{
+  "Image" : "{{REGISTRY_IP_AND_PORT}}/{{CONTAINER_NAME}}:{{IMAGE_TAG}}",
+  "Name" : "/{{CONTAINER_NAME}}",
+  "Hostname" : "{{CONTAINER_NAME}}",
+  "Env": [
+    "SPLUNK_URL={{SPLUNK_URL}}",
+    "SPLUNK_TOKEN={{SPLUNK_TOKEN}}",
+    "HUE_API_TOKEN={{HUE_API_TOKEN}}",
+    "HOME_ASSISTANT_API={{HOME_ASSISTANT_API}}"
+  ],
+  "HostConfig" : {
+    "Devices": [
+      {
+        "PathOnHost": "/dev/i2c-1",
+        "PathInContainer": "/dev/i2c-1",
+        "CgroupPermissions": "rwm"
+      }
+    ],
+    "RestartPolicy": { "Name": "always" }
+  }
+}

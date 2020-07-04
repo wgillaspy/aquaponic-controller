@@ -40,6 +40,8 @@ pipeline {
 
                                 ls -ltra
 
+                                docker build . -t ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
+
                                 
     
                                 #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}/stop ${FLAGS}

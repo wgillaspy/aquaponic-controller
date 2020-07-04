@@ -101,7 +101,8 @@ const functions = {
                 if (endpoint) {
                     axios.post("http://" +  process.env.HOME_ASSISTANT_API + endpoint, jsonToWrite, axiosConfig).then(offResult => {
                         console.log(JSON.stringify(offResult.data, null, 2));
-                        functions.writeSplunkData({"deviceName" : desiredState })
+                        functions.writeSplunkData({"deviceName" : deviceName,
+                                                          "state" : desiredState});
                     }).catch(offExecption => {
                         console.log(offExecption);
                     });

@@ -58,10 +58,15 @@ pipeline {
 
                                 docker ps
                                 docker stop ${CONTAINER_NAME} || true
+                                docker rm ${CONTAINER_NAME} || true
                                 docker pull ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
-                                    
+                                
+                                # It's just easier to push the docker configuration this way.  I'm sure a compose file would be cleaner.    
                                 curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=${CONTAINER_NAME} ${FLAGS}
-                                #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}/start ${FLAGS}
+                                
+                                docker start ${CONTAINER_NAME}
+
+                                docker system prune -f 
 
                               """
                         }

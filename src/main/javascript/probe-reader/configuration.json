@@ -1,5 +1,5 @@
 {
-  "loop_time_in_milis": 10000,
+  "loop_time_in_milis": 5000,
   "commands": {
     "read": {
       "cmd": "R",

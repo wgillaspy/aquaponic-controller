@@ -103,6 +103,8 @@ const functions = {
                     });
                 }
             }
+        }).catch(getError => {
+            console.log(getError);
         });
     },
     "writeSplunkData": (json) => {

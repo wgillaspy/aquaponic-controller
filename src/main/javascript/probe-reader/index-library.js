@@ -58,7 +58,7 @@ const functions = {
                         functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
                     }
                 }
-                if (dosingConfig.of_when) {
+                if (dosingConfig.off_when) {
                     if (functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value)) {
                         functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
                     }

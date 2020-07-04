@@ -19,5 +19,18 @@
       "name": "conductivity",
       "address": 100
     }
-  ]
+  ],
+  "dosing": {
+    "pH": {
+      "entity_id": "light.plug_four",
+      "on_when": {
+        "comparator": "<",
+        "value": 5.9
+      },
+      "off_when": {
+        "comparator": ">",
+        "value": 5.99
+      }
+    }
+  }
 }

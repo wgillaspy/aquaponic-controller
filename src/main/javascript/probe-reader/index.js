@@ -7,6 +7,7 @@ setInterval(function() {
     library.readConfiguredProbesSync().then(result => {
         console.log(JSON.stringify(result, null, 2));
         library.writeSplunkData(result);
+        library.checkValuesAndRunDosingPumps(result);
     });
 }, configuration.loop_time_in_milis);
 

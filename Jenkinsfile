@@ -51,6 +51,7 @@ pipeline {
                                 export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
                                 export DOCKER_TLS_VERIFY=1
 
+                                echo $DOCKER_HOST
                                  
                                 cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
 

@@ -47,7 +47,6 @@ const functions = {
         Object.keys(reading).forEach(function (key, index) {
 
             if (configuration.dosing[key]) {
-                console.log(reading[key]);
 
                 const readingValue = reading[key];
 

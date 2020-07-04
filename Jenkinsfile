@@ -18,11 +18,6 @@ pipeline {
 
     stages {
         stage('Deploy the nodejs controller application') {
-            when {
-                expression {
-                    NODEJS_CONTROLLER_CHANGED == "yes"
-                }
-            }
             steps {
                 script {
 

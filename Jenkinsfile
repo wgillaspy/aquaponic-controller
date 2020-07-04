@@ -60,14 +60,7 @@ pipeline {
                                 docker stop ${CONTAINER_NAME} || true
                                 docker pull ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
                                     
-                                #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}/stop ${FLAGS}
-                                #curl -X DELETE https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}?v=${IMAGE_TAG} ${FLAGS}
-        
-    
-                                #tar -cvf controller.tar package.json package-lock.json index.js ${NODEJS_DOWNLOAD_FILENAME} Dockerfile
-        
-                                #curl -X POST  -H 'Content-Type: application/x-tar' --data-binary '@controller.tar' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/build?t=controller:latest ${FLAGS}
-                                #curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=${CONTAINER_NAME} ${FLAGS}
+                                curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=${CONTAINER_NAME} ${FLAGS}
                                 #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/${CONTAINER_NAME}/start ${FLAGS}
 
                               """

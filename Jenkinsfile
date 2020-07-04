@@ -26,7 +26,7 @@ pipeline {
                                      string(credentialsId: 'HUE_API_TOKEN', variable: 'HUE_API_TOKEN'),
                                      dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH')]) {
 
-                        dir("./nodejs/src/main/probe-reader") {
+                        dir("src/main/javascript/probe-reader") {
 
                             if (fileExists(NODEJS_DOWNLOAD_FILENAME)) {
                                 println "Node js already downloaded."

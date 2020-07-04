@@ -48,6 +48,8 @@ const functions = {
 
             if (configuration.dosing[key]) {
 
+                console.log(`Found key ${key}`);
+
                 const readingValue = reading[key];
 
                 const dosingConfig = configuration.dosing[key];

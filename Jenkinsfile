@@ -46,6 +46,9 @@ pipeline {
                                 cat deploy-container.json | mo > deploy-container.json.tmp
                                 mv deploy-container.json.tmp deploy-container.json
 
+                                unset DOCKER_HOST
+                                unset DOCKER_TLS_VERIFY
+
                                 docker build . -t ${REGISTRY_IP_AND_PORT}/${CONTAINER_NAME}:${IMAGE_TAG}
 
                                 export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}

@@ -48,8 +48,6 @@ const functions = {
 
             if (configuration.dosing[key]) {
 
-                console.log(`Found key ${key}`);
-
                 const readingValue = reading[key];
 
                 const dosingConfig = configuration.dosing[key];
@@ -123,7 +121,7 @@ const functions = {
             };
 
             axios.post(process.env.SPLUNK_URL, eventObject, axiosConfig).then(response => {
-                console.log(`Splunk result: ${response.data.text}`);
+                //console.log(`Splunk result: ${response.data.text}`);
             }).catch(error => {
                 console.log(error);
             });

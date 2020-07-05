@@ -19,8 +19,11 @@
 
 
 ### Nutrient
-|                     | ml  | 
-|-------              |----------|
-| Full Water Change   |295  |
+|               |    Type       | ml   | Conductivity | Total Cond   | 
+|---------------|-------        |----- | ------------ | -------------| 
+| Full Change   | Water         |?     | 179          | 179          | 
+| Full Change   | Flora Grow    |250   | 400          | 584          | 
+| Full Change   | Flora Micro   |150   | 464          | 1046         |
+| Full Change   | Flora Cal Mag |50    | ?            | 1046         |
 | Daily   | ? |
 | Hourly  | ? |

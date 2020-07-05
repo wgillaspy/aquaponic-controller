@@ -4,30 +4,6 @@
         <panel>
             <title>pH</title>
             <chart>
-                <title>Device Status</title>
-                <search>
-                    <query>index=iot devicename deviceName=light.plug_four | eval stateBinary=if(state="off", 0, 1)
-                        | eval stt=stateBinary
-                        | table _time,stt</query>
-                    <earliest>-60m@m</earliest>
-                    <latest>now</latest>
-                    <refresh>2m</refresh>
-                    <refreshType>delay</refreshType>
-                </search>
-                <option name="charting.axisY.maximumNumber">1</option>
-                <option name="charting.axisY.minimumNumber">0</option>
-                <option name="charting.axisY2.enabled">0</option>
-                <option name="charting.chart">line</option>
-                <option name="charting.chart.nullValueMode">gaps</option>
-                <option name="charting.chart.showDataLabels">none</option>
-                <option name="charting.drilldown">none</option>
-                <option name="charting.layout.splitSeries">0</option>
-                <option name="charting.legend.labelStyle.overflowMode">ellipsisEnd</option>
-                <option name="charting.legend.mode">standard</option>
-                <option name="charting.legend.placement">right</option>
-                <option name="refresh.display">progressbar</option>
-            </chart>
-            <chart>
                 <title>Hour</title>
                 <search>
                     <query>index=iot | timechart span=1m avg(pH) as pH</query>

@@ -25,11 +25,11 @@
       "entity_id": "light.plug_four",
       "on_when": {
         "comparator": "<",
-        "value": 5.9
+        "value": 6.0
       },
       "off_when": {
         "comparator": ">",
-        "value": 5.99
+        "value": 6.1
       }
     }
   }

@@ -29,7 +29,7 @@
       },
       "off_when": {
         "comparator": ">",
-        "value": 6.03
+        "value": 6.02
       }
     }
   }

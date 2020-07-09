@@ -3,6 +3,18 @@
     <row>
         <panel>
             <title>pH</title>
+            <single>
+                <search>
+                    <query>index=iot | chart avg(pH) as pH</query>
+                    <earliest>rt-1m</earliest>
+                    <latest>rt</latest>
+                </search>
+                <option name="drilldown">none</option>
+                <option name="numberPrecision">0.00</option>
+                <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+                <option name="refresh.display">progressbar</option>
+                <option name="useColors">0</option>
+            </single>
             <chart>
                 <title>Hour</title>
                 <search>
@@ -86,6 +98,38 @@
         </panel>
         <panel>
             <title>Conductivity</title>
+            <single>
+                <search>
+                    <query>index=iot | chart avg(conductivity) as conductivity</query>
+                    <earliest>rt-1m</earliest>
+                    <latest>rt</latest>
+                </search>
+                <option name="drilldown">none</option>
+                <option name="numberPrecision">0.00</option>
+                <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+                <option name="refresh.display">progressbar</option>
+                <option name="useColors">0</option>
+            </single>
+            <chart>
+                <title>Hourly</title>
+                <search>
+                    <query>index=iot | timechart span=5m avg(conductivity) as conductivity</query>
+                    <earliest>-60m@m</earliest>
+                    <latest>now</latest>
+                    <refresh>2m</refresh>
+                    <refreshType>delay</refreshType>
+                </search>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.chart">line</option>
+                <option name="charting.chart.nullValueMode">gaps</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisStart</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="refresh.display">progressbar</option>
+            </chart>
             <chart>
                 <title>Today</title>
                 <search>

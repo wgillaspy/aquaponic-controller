@@ -55,7 +55,7 @@ const functions = {
                 if (dosingConfig.on_when) {
                     console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
 
-                    console.log(doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
+                    console.log(functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
 
                     if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
                         functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");

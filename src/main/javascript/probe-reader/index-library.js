@@ -53,11 +53,17 @@ const functions = {
                 const dosingConfig = configuration.dosing[key];
 
                 if (dosingConfig.on_when) {
+                    console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
+
+                    console.log(doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
+
                     if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
                         functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
                     }
                 }
                 if (dosingConfig.off_when) {
+                    console.log(`${dosingConfig.off_when.comparator}, ${readingValue}, ${dosingConfig.off_when.value}`);
+                    console.log(functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value));
                     if (functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value)) {
                         functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
                     }

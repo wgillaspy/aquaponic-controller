@@ -1,0 +1,81 @@
+module au_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],
+    input mc_fresh_water_input,
+    input mc_pump_on_input,
+    input mc_pump_off_input,
+    input mc_waste_water_input,
+    output float_valve_output,
+    input float_valve_input,
+    output fresh_water_relay[2],
+    output waste_water_relay[2],
+    output pump_on_off_relay[2], // The power relays
+    output polor_relay[2]
+   ) {
+
+  sig rst;                  // reset signal
+
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+
+    button_conditioner mc_fresh_water_input_conditioned;
+    button_conditioner mc_waste_water_input_conditioned;
+
+    button_conditioner mc_pump_on_input_conditioned;
+    button_conditioner mc_pump_off_input_conditioned;
+
+    button_conditioner float_valve_input_conditioned;
+
+    pipeline waiting_pump_on(#DEPTH(10000));
+
+
+  }
+
+
+  always {
+
+    reset_cond.in = ~rst_n;
+    rst = reset_cond.out;
+
+    led = 8h00;
+    polor_relay = hFF;
+    pump_on_off_relay = hFF;
+    float_valve_output = hFF;
+
+    float_valve_input_conditioned.in = float_valve_input;
+    led[0] = float_valve_input_conditioned.out;
+
+
+    mc_fresh_water_input_conditioned.in = mc_fresh_water_input;
+    mc_waste_water_input_conditioned.in = mc_waste_water_input;
+
+    if (~mc_fresh_water_input_conditioned.out | float_valve_input_conditioned.out) {
+      fresh_water_relay = h00;
+    } else {
+      fresh_water_relay = hFF;
+    }
+//    fresh_water_relay = ~2x{mc_fresh_water_input_conditioned.out};
+
+
+    waste_water_relay = ~2x{mc_waste_water_input_conditioned.out};
+
+    mc_pump_on_input_conditioned.in = mc_pump_on_input;
+    mc_pump_off_input_conditioned.in = mc_pump_off_input;
+
+
+    polor_relay = ~2x{mc_pump_off_input_conditioned.out};
+
+
+    waiting_pump_on.in = (mc_pump_on_input_conditioned.out | mc_pump_off_input_conditioned.out);
+    if (waiting_pump_on.out) {
+      pump_on_off_relay[0] = h00;
+      pump_on_off_relay[1] = h00;
+    } else {
+      pump_on_off_relay[0] = hFF;
+      pump_on_off_relay[1] = hFF;
+    }
+  }
+}

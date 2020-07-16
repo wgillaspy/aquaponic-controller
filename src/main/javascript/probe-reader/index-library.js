@@ -54,9 +54,7 @@ const functions = {
 
                 if (dosingConfig.on_when) {
                     console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
-
                     console.log(functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
-
                     if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
                         functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
                     }
@@ -83,7 +81,11 @@ const functions = {
             "entity_id": deviceName
         };
 
+        console.log(`http://${process.env.HOME_ASSISTANT_API}/api/states/` + deviceName);
+
         axios.get(`http://${process.env.HOME_ASSISTANT_API}/api/states/` + deviceName, axiosConfig).then(statusResult => {
+
+            console.log(statusResult.data);
 
             const currentState = statusResult.data.state;
 

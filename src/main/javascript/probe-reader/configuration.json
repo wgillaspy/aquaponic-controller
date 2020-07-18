@@ -18,6 +18,10 @@
     {
       "name": "conductivity",
       "address": 100
+    },
+    {
+      "name": "temperature",
+      "address" : 102
     }
   ],
   "dosing": {

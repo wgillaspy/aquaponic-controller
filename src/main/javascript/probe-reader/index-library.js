@@ -112,7 +112,14 @@ const functions = {
                 const waitValue = configuration.wait_before_next_dose.replace(/\D/g,'');
                 const waitUnit  = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
                 process.env.timeToDoseAgain = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
-                const command = `D,${doseAmount},${configuration.dose_over_time}`;
+
+
+                let command = "";
+                if (doseAmount > configuration.dose_over_time_when_greater_than) {
+                    command = `D,${doseAmount},${configuration.dose_over_time}`;
+                } else {
+                    command = `D,${doseAmount}`;
+                }
 
                 const splunkJson = {};
                 splunkJson[configuration.splunk_label] = doseAmount;

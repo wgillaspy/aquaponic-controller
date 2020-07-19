@@ -38,6 +38,7 @@
       }
     },
     "conductivity": {
+      "splunk_label" : "nutrient_one",
       "control_type" : "ezo-pmp",
       "address": 90,
       "on_when": {

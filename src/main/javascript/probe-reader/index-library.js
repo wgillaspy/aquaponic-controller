@@ -114,6 +114,10 @@ const functions = {
                 process.env.timeToDoseAgain = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
                 const command = `D,${doseAmount},${configuration.dose_over_time}`;
 
+                const splunkJson = {};
+                splunkJson[configuration.splunk_label] = doseAmount;
+                functions.writeSplunkData(splunkJson);
+
                 const DOSE_SEND = Buffer.from(command);
                 console.log(command);
                 console.log(DOSE_SEND.length);

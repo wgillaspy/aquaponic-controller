@@ -1,6 +1,10 @@
-const i2c = require('i2c-bus');
+let i2c = {};
+if (!process.env.TESTING) {
+    i2c = require('i2c-bus');
+}
 const fs = require("fs-extra");
 const axios = require("axios");
+const moment = require("moment");
 
 const BUFFER_LENGTH = 32;
 const INFO_CMD = 0x49;
@@ -25,7 +29,7 @@ const functions = {
         const i2c1 = i2c.openSync(1);
         for (const probe of configuration.probes) {
 
-            i2c1.sendByteSync(probe.address, 0x52);
+            i2c1.sendByteSync(probe.address, READ_CMD);
 
             await functions.wait(1000);
 
@@ -40,7 +44,7 @@ const functions = {
         i2c1.closeSync();
         return objectToReturn;
     },
-    "checkValuesAndRunDosingPumps" : (reading) => {
+    "checkValuesAndRunDosingPumps": (reading) => {
 
         const configuration = fs.readJsonSync('./configuration.json', 'utf8');
 
@@ -56,18 +60,74 @@ const functions = {
                     console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
                     console.log(functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
                     if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
-                        functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
+
+                        if (dosingConfig.control_type === "home-assist") {
+                            functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
+                        } else if (dosingConfig.control_type === "ezo-pmp") {
+                            functions.controlDosingPumpsWithEzo(dosingConfig,  readingValue,"on");
+                        }
                     }
                 }
                 if (dosingConfig.off_when) {
                     console.log(`${dosingConfig.off_when.comparator}, ${readingValue}, ${dosingConfig.off_when.value}`);
                     console.log(functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value));
                     if (functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value)) {
-                        functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
+                        if (dosingConfig.control_type === "home-assist") {
+                            functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
+                        } else if (dosingConfig.control_type === "ezo-pmp") {
+                            functions.controlDosingPumpsWithEzo(dosingConfig, readingValue,"off");
+                        }
                     }
                 }
             }
         });
+    },
+    "controlDosingPumpsWithEzo": (configuration, reading, desiredState) => {
+
+        if (process.env.timeToDoseAgain) {
+            const canDoseAgain = moment(process.env.timeToDoseAgain, "YYYY-MM-DD HH:mm:ss");
+            const now = moment();
+            //
+            if (now.isBefore(canDoseAgain)) {
+                 console.log(now.format("YYYY-MM-DD HH:mm:ss") + " Waiting to dose. " + process.env.timeToDoseAgain);
+                 return;
+            }
+        }
+
+        if (desiredState === "on") {
+            const desiredPoints = configuration[desiredState + "_when"].value;
+            const difference = desiredPoints - reading;
+            let doseAmount = difference * configuration.amount_per_point;
+            doseAmount = doseAmount.toFixed(1);
+
+            // Make sure the amount request is possible by the pump.
+            if (doseAmount > configuration.minimum_amount) {
+                if (doseAmount > configuration.max_amount) {
+                    doseAmount = configuration.max_amount;
+                    console.log("Dose amount is greater than minimum.");
+                }
+
+                console.log("Dosing: " + doseAmount);
+
+                const waitValue = configuration.wait_before_next_dose.replace(/\D/g,'');
+                const waitUnit  = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
+                process.env.timeToDoseAgain = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
+                const command = `D,${doseAmount},${configuration.dose_over_time}`;
+
+                const DOSE_SEND = Buffer.from(command);
+                console.log(command);
+                console.log(DOSE_SEND.length);
+
+                if (!process.env.TESTING) {
+                    const i2c1 = i2c.openSync(1);
+                    i2c1.i2cWriteSync(configuration.address, DOSE_SEND.length, DOSE_SEND);
+                    i2c1.closeSync();
+                }
+
+            } else {
+                console.log("Dose amount is less than minimum.");
+            }
+        } // Desired state == on.
     },
     "controlDosingPumpsWithHomeAssist": (deviceName, desiredState) => {
 
@@ -100,23 +160,32 @@ const functions = {
 
                 } else if (desiredState === "on") {
 
-                    endpoint = "/api/services/light/turn_on"
+                    endpoint = "/api/services/light/turn_on";
                     data = 1;
                 }
 
-                if (endpoint) {
-                    axios.post("http://" +  process.env.HOME_ASSISTANT_API + endpoint, jsonToWrite, axiosConfig).then(offResult => {
-                        console.log(JSON.stringify(offResult.data, null, 2));
-                        functions.writeSplunkData({"deviceName" : deviceName,
-                                                          "state" : desiredState});
-                    }).catch(offExecption => {
-                        console.log(offExecption);
-                    });
+                const url = `http://${process.env.HOME_ASSISTANT_API}${endpoint}`;
+                if (!process.env.TESTING) {
+                    if (endpoint) {
+                        axios.post(url, jsonToWrite, axiosConfig).then(stateResult => {
+                            console.log(JSON.stringify(stateResult.data, null, 2));
+                            functions.writeSplunkData({
+                                "deviceName": deviceName,
+                                "state": desiredState
+                            });
+                        }).catch(offExecption => {
+                            console.log(offExecption);
+                        });
+                    }
+                } else {
+                    console.log("Testing, Did not call home assist state change.");
                 }
             }
         }).catch(getError => {
-            console.log(getError);
+            console.log(getError.response);
         });
+
+
     },
     "writeSplunkData": (json) => {
         try {
@@ -128,11 +197,14 @@ const functions = {
                 }
             };
 
-            axios.post(process.env.SPLUNK_URL, eventObject, axiosConfig).then(response => {
-                //console.log(`Splunk result: ${response.data.text}`);
-            }).catch(error => {
-                console.log(error);
-            });
+            if (!process.env.TESTING) {
+
+                axios.post(process.env.SPLUNK_URL, eventObject, axiosConfig).then(response => {
+                    //console.log(`Splunk result: ${response.data.text}`);
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
 
         } catch (splunkWriteDataError) {
             console.log("splunkWriteDataError:");

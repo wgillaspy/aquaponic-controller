@@ -26,6 +26,7 @@
   ],
   "dosing": {
     "pH": {
+      "control_type" : "home-assist",
       "entity_id": "light.plug_four",
       "on_when": {
         "comparator": "<",
@@ -35,6 +36,19 @@
         "comparator": ">",
         "value": 6.02
       }
+    },
+    "conductivity": {
+      "control_type" : "ezo-pmp",
+      "address": "90",
+      "on_when": {
+        "comparator": "<",
+        "value": 1200
+      },
+      "wait_before_next_dose" : "30m",
+      "amount_per_point" :  0.6,
+      "minimum_amount" : 0.6,
+      "max_amount" : 1,
+      "dose_over_time" : 1
     }
   }
 }

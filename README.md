@@ -27,3 +27,11 @@
 | Full Change   | Flora Cal Mag |50    | ?            | 1046         |
 | Daily   | ? |
 | Hourly  | ? |
+
+
+
+### Dosing reservoir mix 1000mL:  
+600ml filtered water  
+250ml Flora Grow  
+150ml Flora Micro   
+10mL will raise the EC 6pts.

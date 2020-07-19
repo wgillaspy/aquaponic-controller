@@ -36,5 +36,6 @@ easynode.xml
 # PDT-specific
 .buildpath
 .cache
+.env
 
 node_modules

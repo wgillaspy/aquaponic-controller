@@ -39,7 +39,7 @@
     },
     "conductivity": {
       "control_type" : "ezo-pmp",
-      "address": "0x5A",
+      "address": "90",
       "on_when": {
         "comparator": "<",
         "value": 1200

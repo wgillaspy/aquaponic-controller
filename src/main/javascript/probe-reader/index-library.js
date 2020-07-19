@@ -145,7 +145,7 @@ const functions = {
 
         axios.get(`http://${process.env.HOME_ASSISTANT_API}/api/states/` + deviceName, axiosConfig).then(statusResult => {
 
-            console.log(statusResult.data);
+            console.log("Device State: " + statusResult.data.state);
 
             const currentState = statusResult.data.state;
 

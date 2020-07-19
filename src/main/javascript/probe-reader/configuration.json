@@ -47,8 +47,8 @@
       "wait_before_next_dose" : "30m",
       "amount_per_point" :  0.6,
       "minimum_amount" : 0.6,
-      "max_amount" : 1,
-      "dose_over_time" : 1
+      "max_amount" : 200,
+      "dose_over_time" : 20
     }
   }
 }

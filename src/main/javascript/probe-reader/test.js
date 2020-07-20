@@ -9,7 +9,9 @@ const reading = {
     "conductivity": "1086"
 };
 
-setInterval(() => {library.checkValuesAndRunDosingPumps(reading)}, 2000);
+//setInterval(() => {library.checkValuesAndRunDosingPumps(reading)}, 2000);
+
+//library.setupCronTabSchedule();
 
 
 

@@ -30,8 +30,13 @@
 
 
 
-### Dosing reservoir mix 1000mL:  
+### Dosing reservoir mix 1000mL (nutrient_one):  
 600ml filtered water  
 250ml Flora Grow  
 150ml Flora Micro   
 10mL will raise the EC 6pts.
+
+### Dosing reservoir mix 840mL (nutrient_two) Iron and Magnesium:  
+640ml filtered water  
+100ml Mg  
+100ml Fe   

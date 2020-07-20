@@ -6,6 +6,8 @@ const fs = require("fs-extra");
 const axios = require("axios");
 const moment = require("moment");
 
+const CronJob = require('cron').CronJob;
+
 const BUFFER_LENGTH = 32;
 const INFO_CMD = 0x49;
 const READ_CMD = 0x52;
@@ -43,6 +45,33 @@ const functions = {
         }
         i2c1.closeSync();
         return objectToReturn;
+    },
+    "setupCronTabSchedule": () => {
+
+        const configuration = fs.readJsonSync('./configuration.json', 'utf8');
+
+        Object.keys(configuration.dosing_scheduled).forEach(function (key, index) {
+            console.log("Setting up crontab: " + key);
+
+            const dosingConfig = configuration.dosing_scheduled[key];
+
+            const job = new CronJob(dosingConfig.cron_pattern, function() {
+                functions.scheduledRunDosingPumps(key);
+            }, null, true);
+            job.start();
+        });
+    },
+    "scheduledRunDosingPumps": (label) => {
+        const configuration = fs.readJsonSync('./configuration.json', 'utf8');
+        const dosingConfig = configuration.dosing_scheduled[label];
+        console.log(dosingConfig);
+
+        if (dosingConfig.control_type === "home-assist") {
+            console.log("Not implemented.");
+        } else if (dosingConfig.control_type === "ezo-pmp") {
+            functions.ezoRunDose(dosingConfig, dosingConfig.amount);
+        }
+
     },
     "checkValuesAndRunDosingPumps": (reading) => {
 
@@ -113,32 +142,43 @@ const functions = {
                 const waitUnit  = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
                 process.env.timeToDoseAgain = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
 
-
-                let command = "";
-                if (doseAmount > configuration.dose_over_time_when_greater_than) {
-                    command = `D,${doseAmount},${configuration.dose_over_time}`;
-                } else {
-                    command = `D,${doseAmount}`;
-                }
-
-                const splunkJson = {};
-                splunkJson[configuration.splunk_label] = doseAmount;
-                functions.writeSplunkData(splunkJson);
-
-                const DOSE_SEND = Buffer.from(command);
-                console.log(command);
-                console.log(DOSE_SEND.length);
-
-                if (!process.env.TESTING) {
-                    const i2c1 = i2c.openSync(1);
-                    i2c1.i2cWriteSync(configuration.address, DOSE_SEND.length, DOSE_SEND);
-                    i2c1.closeSync();
-                }
+                functions.ezoRunDose(configuration, doseAmount);
 
             } else {
                 console.log("Dose amount is less than minimum.");
             }
         } // Desired state == on.
+    },
+    "ezoRunDose" : (configuration, doseAmount) => {
+        let command = "";
+
+        if (configuration.dose_over_time_when_greater_than) {
+            if (doseAmount > configuration.dose_over_time_when_greater_than) {
+                command = `D,${doseAmount},${configuration.dose_over_time}`;
+            } else {
+                command = `D,${doseAmount}`;
+            }
+        } else {
+            if (configuration.dose_over_time) {
+                command = `D,${doseAmount},${configuration.dose_over_time}`;
+            } else {
+                command = `D,${doseAmount}`;
+            }
+        }
+
+        const splunkJson = {};
+        splunkJson[configuration.splunk_label] = doseAmount;
+        functions.writeSplunkData(splunkJson);
+
+        const DOSE_SEND = Buffer.from(command);
+        console.log(command);
+        console.log("Buffer Length: " + DOSE_SEND.length);
+
+        if (!process.env.TESTING) {
+            const i2c1 = i2c.openSync(1);
+            i2c1.i2cWriteSync(configuration.address, DOSE_SEND.length, DOSE_SEND);
+            i2c1.closeSync();
+        }
     },
     "controlDosingPumpsWithHomeAssist": (deviceName, desiredState) => {
 
@@ -209,7 +249,6 @@ const functions = {
             };
 
             if (!process.env.TESTING) {
-
                 axios.post(process.env.SPLUNK_URL, eventObject, axiosConfig).then(response => {
                     //console.log(`Splunk result: ${response.data.text}`);
                 }).catch(error => {

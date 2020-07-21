@@ -58,7 +58,7 @@
       "splunk_label" : "nutrient_two",
       "control_type" : "ezo-pmp",
       "address": 91,
-      "cron_pattern" : "0 30 6 * * *",
+      "cron_pattern" : "0 30 6,20 * * *",
       "amount" : 10,
       "dose_over_time" : 10
     }

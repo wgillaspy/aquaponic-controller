@@ -6,8 +6,12 @@ module au_top (
     input mc_pump_on_input,
     input mc_pump_off_input,
     input mc_waste_water_input,
-    output float_valve_output,
-    input float_valve_input,
+    output mc_float_low_indicator,
+    output mc_float_high_indicator,
+    output float_valve_low_output,
+    input  float_valve_low_input,
+    output float_valve_high_output,
+    input  float_valve_high_input,
     output fresh_water_relay[2],
     output waste_water_relay[2],
     output pump_on_off_relay[2], // The power relays
@@ -27,11 +31,10 @@ module au_top (
     button_conditioner mc_pump_on_input_conditioned;
     button_conditioner mc_pump_off_input_conditioned;
 
-    button_conditioner float_valve_input_conditioned;
+    button_conditioner float_valve_low_input_conditioned;
+    button_conditioner float_valve_high_input_conditioned;
 
     pipeline waiting_pump_on(#DEPTH(10000));
-
-
   }
 
 
@@ -43,31 +46,34 @@ module au_top (
     led = 8h00;
     polor_relay = hFF;
     pump_on_off_relay = hFF;
-    float_valve_output = hFF;
 
-    float_valve_input_conditioned.in = float_valve_input;
-    led[0] = float_valve_input_conditioned.out;
+    float_valve_low_output = hFF;
+    float_valve_high_output = hFF;
 
+    float_valve_low_input_conditioned.in = float_valve_low_input;
+    float_valve_high_input_conditioned.in = float_valve_high_input;
+
+    led[0] = float_valve_low_input_conditioned.out;
+    led[1] = float_valve_high_input_conditioned.out;
+
+    mc_float_low_indicator = float_valve_low_input_conditioned.out;
+    mc_float_high_indicator = float_valve_high_input_conditioned.out;
 
     mc_fresh_water_input_conditioned.in = mc_fresh_water_input;
     mc_waste_water_input_conditioned.in = mc_waste_water_input;
 
-    if (~mc_fresh_water_input_conditioned.out | float_valve_input_conditioned.out) {
+    if (mc_fresh_water_input_conditioned.out | float_valve_low_input_conditioned.out) {
       fresh_water_relay = h00;
     } else {
       fresh_water_relay = hFF;
     }
-//    fresh_water_relay = ~2x{mc_fresh_water_input_conditioned.out};
-
 
     waste_water_relay = ~2x{mc_waste_water_input_conditioned.out};
 
     mc_pump_on_input_conditioned.in = mc_pump_on_input;
     mc_pump_off_input_conditioned.in = mc_pump_off_input;
 
-
     polor_relay = ~2x{mc_pump_off_input_conditioned.out};
-
 
     waiting_pump_on.in = (mc_pump_on_input_conditioned.out | mc_pump_off_input_conditioned.out);
     if (waiting_pump_on.out) {

@@ -2,10 +2,15 @@ pin mc_fresh_water_input B3;
 pin mc_pump_on_input     B6;
 pin mc_pump_off_input    B9;
 pin mc_waste_water_input  B12;
-pin float_valve_output   B2 pullup;
-pin float_valve_input    B5;
 
+pin mc_float_low_indicator B15;
+pin mc_float_high_indicator B18;
 
+pin float_valve_low_output   B2 pullup;
+pin float_valve_low_input    B5 pulldown;
+
+pin float_valve_high_output   B8 pullup;
+pin float_valve_high_input    B11 pulldown;
 
 pin fresh_water_relay[0] B27 pullup;  // Fresh water valve 12V
 pin fresh_water_relay[1] B30 pullup;  // Fresh water valve ground
@@ -21,6 +26,7 @@ pin waste_water_relay[1] B48 pullup;
 
 pin clk CLOCK;
 clock clk 100MHz;
+
 pin rst_n RESET;
 
 pin led[0] LED0;

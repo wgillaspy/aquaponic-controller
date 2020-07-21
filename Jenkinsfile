@@ -1,5 +1,3 @@
-def changedFiles = []
-
 pipeline {
 
     agent { label 'jenkins-bc-did' }

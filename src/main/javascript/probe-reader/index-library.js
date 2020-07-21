@@ -192,9 +192,13 @@ const functions = {
             "entity_id": deviceName
         };
 
-        console.log(`http://${process.env.HOME_ASSISTANT_API}/api/states/` + deviceName);
 
-        axios.get(`http://${process.env.HOME_ASSISTANT_API}/api/states/` + deviceName, axiosConfig).then(statusResult => {
+
+        const deviceStateUrl = `http://${process.env.HOME_ASSISTANT_API}/api/states/${deviceName}`;
+
+        console.log(deviceStateUrl);
+
+        axios.get(deviceStateUrl, axiosConfig).then(statusResult => {
 
             console.log("Device State: " + statusResult.data.state);
 
@@ -203,16 +207,11 @@ const functions = {
             if (currentState !== desiredState) {
 
                 let endpoint = "";
-                let data = 0;
 
                 if (desiredState === "off") {
-
                     endpoint = "/api/services/light/turn_off"
-
                 } else if (desiredState === "on") {
-
                     endpoint = "/api/services/light/turn_on";
-                    data = 1;
                 }
 
                 const url = `http://${process.env.HOME_ASSISTANT_API}${endpoint}`;
@@ -235,8 +234,6 @@ const functions = {
         }).catch(getError => {
             console.log(getError.response);
         });
-
-
     },
     "writeSplunkData": (json) => {
         try {

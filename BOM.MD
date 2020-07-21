@@ -1,4 +1,4 @@
-####Things:
+#### Things:
 - [Horizontal Leg tank](https://www.tractorsupply.com/tsc/product/horizontal-leg-tank-65-gal) with the top trimmed off. (used)
 - Costco Industrial Storage Rack $159.00 
 - [Trough Liner](https://farmplasticsupply.com/hydroponics?product_id=474)                   $36.99

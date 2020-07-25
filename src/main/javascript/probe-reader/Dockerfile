@@ -5,7 +5,8 @@ ENV TZ America/New_York
 
 WORKDIR /usr/src/app
 
-#RUN apt-get update
+RUN apt-get dist-upgrade
+RUN apt-get update
 RUN apt-get install -y python make libatomic1 g++
 
 COPY {{NODEJS_DOWNLOAD_FILENAME}} ./{{NODEJS_DOWNLOAD_FILENAME}}

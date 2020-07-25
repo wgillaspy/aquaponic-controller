@@ -1,5 +1,5 @@
 # 5
-FROM arm32v7/ubuntu:latest
+FROM arm32v7/ubuntu:bionic
 
 ENV TZ America/New_York
 

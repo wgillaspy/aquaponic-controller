@@ -22,6 +22,10 @@
     {
       "name": "temperature",
       "address" : 102
+    },
+    {
+      "name": "DO",
+      "address" : 97
     }
   ],
   "dosing": {

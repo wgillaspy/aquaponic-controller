@@ -14,6 +14,7 @@ const READ_CMD = 0x52;
 
 const functions = {
 
+    "timeToDoseAgain" : {},
     "wait": async (amount) => {
         await new Promise(function (resolve, reject) {
             setTimeout(resolve, amount);
@@ -126,19 +127,15 @@ const functions = {
     },
     "controlDosingPumpsWithEzo": (configuration, reading, desiredState) => {
 
-        if (process.env.timeToDoseAgain) {
+        if (functions.timeToDoseAgain[configuration.splunk_label]) {
 
-            if (process.env.timeToDoseAgain[configuration.splunk_label])
-
-            const canDoseAgain = moment(process.env.timeToDoseAgain[configuration.splunk_label], "YYYY-MM-DD HH:mm:ss");
+            const canDoseAgain = moment(functions.timeToDoseAgain[configuration.splunk_label], "YYYY-MM-DD HH:mm:ss");
             const now = moment();
             //
             if (now.isBefore(canDoseAgain)) {
-                console.log(now.format("YYYY-MM-DD HH:mm:ss") + " Waiting to dose. " + process.env.timeToDoseAgain[configuration.splunk_label]);
+                console.log(now.format("YYYY-MM-DD HH:mm:ss") + " " + configuration.splunk_label + " Waiting to dose. " + functions.timeToDoseAgain[configuration.splunk_label]);
                 return;
             }
-        } else {
-            process.env.timeToDoseAgain = { "created" : true};
         }
 
         if (desiredState === "on") {
@@ -154,12 +151,12 @@ const functions = {
                     console.log("Dose amount is greater than minimum.");
                 }
 
-                console.log("Dosing: " + doseAmount);
+                console.log(configuration.splunk_label + ", dosing: " + doseAmount);
 
                 const waitValue = configuration.wait_before_next_dose.replace(/\D/g, '');
                 const waitUnit = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
-                process.env.timeToDoseAgain[configuration.splunk_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
 
+                functions.timeToDoseAgain[configuration.splunk_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
                 functions.ezoRunDose(configuration, doseAmount);
 
             } else {

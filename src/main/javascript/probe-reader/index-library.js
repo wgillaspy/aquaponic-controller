@@ -127,13 +127,18 @@ const functions = {
     "controlDosingPumpsWithEzo": (configuration, reading, desiredState) => {
 
         if (process.env.timeToDoseAgain) {
-            const canDoseAgain = moment(process.env.timeToDoseAgain, "YYYY-MM-DD HH:mm:ss");
+
+            if (process.env.timeToDoseAgain[configuration.splunk_label])
+
+            const canDoseAgain = moment(process.env.timeToDoseAgain[configuration.splunk_label], "YYYY-MM-DD HH:mm:ss");
             const now = moment();
             //
             if (now.isBefore(canDoseAgain)) {
-                console.log(now.format("YYYY-MM-DD HH:mm:ss") + " Waiting to dose. " + process.env.timeToDoseAgain);
+                console.log(now.format("YYYY-MM-DD HH:mm:ss") + " Waiting to dose. " + process.env.timeToDoseAgain[configuration.splunk_label]);
                 return;
             }
+        } else {
+            process.env.timeToDoseAgain = { "created" : true};
         }
 
         if (desiredState === "on") {
@@ -153,7 +158,7 @@ const functions = {
 
                 const waitValue = configuration.wait_before_next_dose.replace(/\D/g, '');
                 const waitUnit = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
-                process.env.timeToDoseAgain = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
+                process.env.timeToDoseAgain[configuration.splunk_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
 
                 functions.ezoRunDose(configuration, doseAmount);
 

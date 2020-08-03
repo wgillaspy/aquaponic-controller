@@ -7,12 +7,9 @@
 | Full Change   | Flora Cal Mag |50    | ?            | ?            |
 
 
-
-### Dosing reservoir mix 1000mL (nutrient_one):  
-600ml filtered water  
-250ml Flora Grow  
-150ml Flora Micro   
-10mL will raise the EC ~6pts.
+- nutrient_one   = Flora Grow  
+- nutrient_three = Flora Micro  
+- nutrient_four  = Kelp extract  
 
 ### Dosing reservoir mix 840mL (nutrient_two) Iron and Magnesium:  
 640ml filtered water  

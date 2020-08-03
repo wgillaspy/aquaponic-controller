@@ -55,7 +55,7 @@ const functions = {
 
             const dosingConfig = configuration.dosing_scheduled[key];
 
-            const job = new CronJob(dosingConfig.cron_pattern, function() {
+            const job = new CronJob(dosingConfig.cron_pattern, function () {
                 functions.scheduledRunDosingPumps(key);
             }, null, true);
             job.start();
@@ -79,32 +79,45 @@ const functions = {
 
         Object.keys(reading).forEach(function (key, index) {
 
+
             if (configuration.dosing[key]) {
 
                 const readingValue = reading[key];
 
-                const dosingConfig = configuration.dosing[key];
+                const dosingConfigCheck = configuration.dosing[key];
 
-                if (dosingConfig.on_when) {
-                    console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
-                    console.log(functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
-                    if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
+                let dosingConfigArray = [];
 
-                        if (dosingConfig.control_type === "home-assist") {
-                            functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
-                        } else if (dosingConfig.control_type === "ezo-pmp") {
-                            functions.controlDosingPumpsWithEzo(dosingConfig,  readingValue,"on");
+                if (Array.isArray(dosingConfigCheck)) {
+                    dosingConfigArray = configuration.dosing[key];
+                } else {
+                    dosingConfigArray = [configuration.dosing[key]];
+                }
+
+
+                for (const dosingConfig of dosingConfigArray) {
+
+                    if (dosingConfig.on_when) {
+                        console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
+                        console.log(functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
+                        if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
+
+                            if (dosingConfig.control_type === "home-assist") {
+                                functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
+                            } else if (dosingConfig.control_type === "ezo-pmp") {
+                                functions.controlDosingPumpsWithEzo(dosingConfig, readingValue, "on");
+                            }
                         }
                     }
-                }
-                if (dosingConfig.off_when) {
-                    console.log(`${dosingConfig.off_when.comparator}, ${readingValue}, ${dosingConfig.off_when.value}`);
-                    console.log(functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value));
-                    if (functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value)) {
-                        if (dosingConfig.control_type === "home-assist") {
-                            functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
-                        } else if (dosingConfig.control_type === "ezo-pmp") {
-                            functions.controlDosingPumpsWithEzo(dosingConfig, readingValue,"off");
+                    if (dosingConfig.off_when) {
+                        console.log(`${dosingConfig.off_when.comparator}, ${readingValue}, ${dosingConfig.off_when.value}`);
+                        console.log(functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value));
+                        if (functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value)) {
+                            if (dosingConfig.control_type === "home-assist") {
+                                functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
+                            } else if (dosingConfig.control_type === "ezo-pmp") {
+                                functions.controlDosingPumpsWithEzo(dosingConfig, readingValue, "off");
+                            }
                         }
                     }
                 }
@@ -118,8 +131,8 @@ const functions = {
             const now = moment();
             //
             if (now.isBefore(canDoseAgain)) {
-                 console.log(now.format("YYYY-MM-DD HH:mm:ss") + " Waiting to dose. " + process.env.timeToDoseAgain);
-                 return;
+                console.log(now.format("YYYY-MM-DD HH:mm:ss") + " Waiting to dose. " + process.env.timeToDoseAgain);
+                return;
             }
         }
 
@@ -138,8 +151,8 @@ const functions = {
 
                 console.log("Dosing: " + doseAmount);
 
-                const waitValue = configuration.wait_before_next_dose.replace(/\D/g,'');
-                const waitUnit  = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
+                const waitValue = configuration.wait_before_next_dose.replace(/\D/g, '');
+                const waitUnit = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
                 process.env.timeToDoseAgain = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
 
                 functions.ezoRunDose(configuration, doseAmount);
@@ -149,7 +162,7 @@ const functions = {
             }
         } // Desired state == on.
     },
-    "ezoRunDose" : (configuration, doseAmount) => {
+    "ezoRunDose": (configuration, doseAmount) => {
         let command = "";
 
         if (configuration.dose_over_time_when_greater_than) {
@@ -191,7 +204,6 @@ const functions = {
         const jsonToWrite = {
             "entity_id": deviceName
         };
-
 
 
         const deviceStateUrl = `http://${process.env.HOME_ASSISTANT_API}/api/states/${deviceName}`;

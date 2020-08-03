@@ -21,16 +21,16 @@
     },
     {
       "name": "temperature",
-      "address" : 102
+      "address": 102
     },
     {
       "name": "DO",
-      "address" : 97
+      "address": 97
     }
   ],
   "dosing": {
     "pH": {
-      "control_type" : "home-assist",
+      "control_type": "home-assist",
       "entity_id": "light.plug_four",
       "on_when": {
         "comparator": "<",
@@ -41,30 +41,55 @@
         "value": 6.02
       }
     },
-    "conductivity": {
-      "splunk_label" : "nutrient_one",
-      "control_type" : "ezo-pmp",
-      "address": 90,
-      "on_when": {
-        "comparator": "<",
-        "value": 1200
+    "conductivity": [
+      {
+        "splunk_label": "nutrient_one",
+        "control_type": "ezo-pmp",
+        "address": 90,
+        "on_when": {
+          "comparator": "<",
+          "value": 1300
+        },
+        "wait_before_next_dose": "30m",
+        "amount_per_point": 0.6,
+        "minimum_amount": 0.6,
+        "max_amount": 200,
+        "dose_over_time": 20,
+        "dose_over_time_when_greater_than": 15
       },
-      "wait_before_next_dose" : "30m",
-      "amount_per_point" :  0.6,
-      "minimum_amount" : 0.6,
-      "max_amount" : 200,
-      "dose_over_time" : 20,
-      "dose_over_time_when_greater_than" : 15
-    }
+      {
+        "splunk_label": "nutrient_three",
+        "control_type": "ezo-pmp",
+        "address": 92,
+        "on_when": {
+          "comparator": "<",
+          "value": 1300
+        },
+        "wait_before_next_dose": "30m",
+        "amount_per_point": 0.6,
+        "minimum_amount": 0.6,
+        "max_amount": 200,
+        "dose_over_time": 20,
+        "dose_over_time_when_greater_than": 15
+      }
+    ]
   },
-  "dosing_scheduled" : {
+  "dosing_scheduled": {
     "fe_and_mg": {
-      "splunk_label" : "nutrient_two",
-      "control_type" : "ezo-pmp",
+      "splunk_label": "nutrient_two",
+      "control_type": "ezo-pmp",
       "address": 91,
-      "cron_pattern" : "0 30 0,6,12,18 * * *",
-      "amount" : 10,
-      "dose_over_time" : 10
+      "cron_pattern": "0 30 0,6,12,18 * * *",
+      "amount": 10,
+      "dose_over_time": 10
+    },
+    "kelp_extract": {
+      "splunk_label": "nutrient_four",
+      "control_type": "ezo-pmp",
+      "address": 93,
+      "cron_pattern": "0 30 1,7,13,18 * * *",
+      "amount": 10,
+      "dose_over_time": 10
     }
   }
 }

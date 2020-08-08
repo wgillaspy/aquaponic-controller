@@ -63,6 +63,12 @@ void loop() {
          digitalWrite(DRAIN_PIN, HIGH);
    }
 
+   if (digitalRead(DRAIN_PIN) != HIGH && digitalRead(FILL_PIN) != HIGH) {
+            digitalWrite(PUMP_VALVE_ON, HIGH);
+            delay(500);
+            digitalWrite(PUMP_VALVE_OFF, LOW);
+   }
+
    delay(WAIT_DELAY);
    digitalWrite(LED, LOW);
 

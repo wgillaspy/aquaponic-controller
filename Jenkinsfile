@@ -59,7 +59,7 @@ pipeline {
                     withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH')]) {
 
                         sh """
-                        cd src/main/arduino
+                        cd src/main/arduino/valve-controller
 
                         cat ${INO} | mo > ${INO}.tmp
                         mv -f ${INO}.tmp ${INO}

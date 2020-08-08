@@ -54,10 +54,11 @@ void loop() {
 //  //digitalWrite(PUMP_VALVE_ON, LOW);
 //  //digitalWrite(FRESH_WATER_VALVE, HIGH);
 //  digitalWrite(13, LOW);
-
+   digitalWrite(LED, HIGH);
    digitalWrite(FRESH_WATER_VALVE, HIGH);
    delay(WAIT_DELAY);
    digitalWrite(FRESH_WATER_VALVE, LOW);
+   digitalWrite(LED, LOW);
    delay(WAIT_DELAY);
 
 

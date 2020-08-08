@@ -15,7 +15,7 @@ pipeline {
         NODEJS_DOWNLOAD = "https://nodejs.org/dist/latest-v13.x/node-v13.14.0-linux-armv7l.tar.xz"
         NODEJS_DOWNLOAD_FILENAME = "node-v13.14.0-linux-armv7l.tar.xz"
         NODEJS_DOWNLOAD_DIRECTORY = "node-v13.14.0-linux-armv7l"
-        INO_VALVE_CHANGED = "no"
+        INO_VALVE_CHANGED = "yes"
     }
 
     stages {

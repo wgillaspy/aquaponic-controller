@@ -1,6 +1,8 @@
 #define READ_DELAY 12000
 #define WAIT_DELAY 2000
 
+
+#define LED  13
 #define FRESH_WATER_VALVE  9
 #define PUMP_VALVE_ON 8
 #define PUMP_VALVE_OFF 7
@@ -28,8 +30,6 @@ void loop() {
 
   boolean once = false;
 
-  
-
 //  delay(READ_DELAY);
 //  digitalWrite(PUMP_VALVE_OFF, LOW);
 //  delay(WAIT_DELAY);
@@ -42,7 +42,10 @@ void loop() {
 //  //digitalWrite(PUMP_VALVE_ON, LOW);
 //  //digitalWrite(FRESH_WATER_VALVE, HIGH);
 //  digitalWrite(13, LOW);
-   delay(READ_DELAY);
+   delay(WAIT_DELAY);
+   digitalWrite(LED, HIGH);
+   delay(WAIT_DELAY);
+   digitalWrite(LED, LOW);
 }
 
 void waterChange() {

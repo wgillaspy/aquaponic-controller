@@ -1,0 +1,14 @@
+{
+  "Image" : "ino:latest",
+  "Name" : "/ino",
+  "Hostname" : "ino",
+  "HostConfig" : {
+    "Devices": [
+      {
+        "PathOnHost": "/dev/ino",
+        "PathInContainer": "/dev/ino",
+        "CgroupPermissions": "rwm"
+      }
+    ]
+  }
+}

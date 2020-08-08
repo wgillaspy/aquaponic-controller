@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/wgillaspy/arm64v8-avrdude/arm64v8-avrdude:latest
+FROM docker.pkg.github.com/wgillaspy/arm64v8-avrdude/arm64v8-avrdude:uno
 
 ENV TZ America/New_York
 

@@ -11,6 +11,9 @@
 #define FLOAT_VALVE_HIGH 5
 #define FLOAT_VALVE_LOW  4
 
+#define FILL_PIN = A0;
+#define DRAIN_PIN = A1;
+
 void setup() {
    pinMode(FRESH_WATER_VALVE, OUTPUT);
    pinMode(PUMP_VALVE_ON,     OUTPUT);
@@ -19,11 +22,18 @@ void setup() {
 
    pinMode(FLOAT_VALVE_HIGH,    INPUT);
    pinMode(FLOAT_VALVE_LOW,    INPUT);
-  
+
+
+   pinMode(FILL_PIN,    INPUT);
+   pinMode(DRAIN_PIN,    INPUT);
+
    digitalWrite(FRESH_WATER_VALVE, LOW);
    digitalWrite(PUMP_VALVE_ON,     LOW);
    digitalWrite(PUMP_VALVE_OFF,    LOW);
    digitalWrite(WASTE_WATER_VALVE, LOW);
+
+   digitalWrite(FILL_PIN, LOW);
+   digitalWrite(DRAIN_PIN, LOW);
 }
 
 void loop() {
@@ -44,8 +54,18 @@ void loop() {
 //  digitalWrite(13, LOW);
    delay(WAIT_DELAY);
    digitalWrite(LED, HIGH);
+
+   if (digitalRead(DRAIN_PIN) == HIGH) {
+         digitalWrite(LED, LOW);
+   }
+
    delay(WAIT_DELAY);
    digitalWrite(LED, LOW);
+
+   if (digitalRead(FILL_PIN) == HIGH) {
+      digitalWrite(LED, HIGH);
+   }
+
 }
 
 void waterChange() {

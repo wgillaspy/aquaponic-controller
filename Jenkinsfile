@@ -56,9 +56,10 @@ pipeline {
 
                     env.INO = "valve-controller.ino"
 
-                    withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH')]) {
+                    withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH'),
+                                     usernamePassword(credentialsId: 'GITHUBUSER_TOKENPASS', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
 
-                        sh """
+                    sh """
                         cd src/main/arduino/valve-controller
 
                         cat ${INO} | mo > ${INO}.tmp
@@ -71,6 +72,8 @@ pipeline {
                         cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
                         export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
                         export DOCKER_TLS_VERIFY=1
+
+                        docker login docker.pkg.github.com -u ${USER} -p ${PASS}
 
 
                         

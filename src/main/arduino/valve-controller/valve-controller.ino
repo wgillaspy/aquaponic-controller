@@ -55,7 +55,11 @@ void loop() {
 //  //digitalWrite(FRESH_WATER_VALVE, HIGH);
 //  digitalWrite(13, LOW);
 
+   digitalWrite(FRESH_WATER_VALVE, HIGH);
    delay(WAIT_DELAY);
+   digitalWrite(FRESH_WATER_VALVE, LOW);
+   delay(WAIT_DELAY);
+
 
 //
 //   if (digitalRead(DRAIN_PIN) == HIGH) {

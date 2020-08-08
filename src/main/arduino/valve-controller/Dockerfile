@@ -6,4 +6,4 @@ WORKDIR /usr/app
 
 COPY {{INO}} /usr/app/{{INO}}
 
-CMD ["bash", "/arduino-builder.sh","{{INO}}", "/dev/pumpController"]
+CMD ["bash", "/arduino-builder.sh","{{INO}}", "/dev/ino"]

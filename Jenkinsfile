@@ -59,7 +59,12 @@ pipeline {
                     withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH'),
                                      usernamePassword(credentialsId: 'GITHUBUSER_TOKENPASS', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
 
+                        FLAGS = "--insecure --cert ${LOCAL_DOCKER_CERT_PATH}/cert.pem --key ${LOCAL_DOCKER_CERT_PATH}/key.pem  --cacert ${LOCAL_DOCKER_CERT_PATH}/ca.pem"
+
                     sh """
+
+
+
                         cd src/main/arduino/valve-controller
 
                         cat ${INO} | mo > ${INO}.tmp
@@ -80,7 +85,7 @@ pipeline {
                         docker rm ino || true
                         docker build . -t ino:latest
 
-                        curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino
+                        curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino ${FLAGS}
                         #curl -X POST  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/start
                         
                     """
@@ -89,7 +94,7 @@ pipeline {
                             script {
 
                                 CONTANER_STATUS = sh(
-                                        script: "curl -X GET  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/json",
+                                        script: "curl -X GET  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/json ${FLAGS}",
                                         returnStdout: true
                                 ).trim()
 

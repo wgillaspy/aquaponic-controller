@@ -8,6 +8,7 @@
 #define PUMP_VALVE_ON 8
 
 #define PUMP_VALVE_OFF 7
+
 #define WASTE_WATER_VALVE  6
 
 #define FLOAT_VALVE_HIGH 5
@@ -41,8 +42,6 @@ void setup() {
 
 void loop() {
 
-  boolean once = false;
-
 //  delay(READ_DELAY);
 //  digitalWrite(PUMP_VALVE_OFF, LOW);
 //  delay(WAIT_DELAY);
@@ -57,30 +56,33 @@ void loop() {
 //  digitalWrite(13, LOW);
 
    delay(WAIT_DELAY);
-   digitalWrite(LED, HIGH);
+
 
    if (digitalRead(DRAIN_PIN) == HIGH) {
+
+       digitalWrite(FRESH_WATER_VALVE, LOW);
        digitalWrite(PUMP_VALVE_ON, LOW);
        delay(500);
        digitalWrite(PUMP_VALVE_OFF, HIGH);
        delay(12000)
        digitalWrite(PUMP_VALVE_OFF, LOW);
+       digitalWrite(LED, HIGH);
+
    } else {
+
+      digitalWrite(FRESH_WATER_VALVE, LOW);
       digitalWrite(PUMP_VALVE_OFF, LOW);
       delay(500);
       digitalWrite(PUMP_VALVE_ON, HIGH);
       delay(12000)
       digitalWrite(PUMP_VALVE_ON, LOW);
+      digitalWrite(LED, LOW);
+
    }
 
-//   if (digitalRead(DRAIN_PIN) != HIGH && digitalRead(FILL_PIN) != HIGH) {
-//            digitalWrite(PUMP_VALVE_OFF, LOW);
-//            delay(500);
-//            digitalWrite(PUMP_VALVE_ON, HIGH);
-//   }
 
-   delay(WAIT_DELAY);
-   digitalWrite(LED, LOW);
+
+
 
 //   if (digitalRead(FILL_PIN) == HIGH) {
 //      digitalWrite(LED, HIGH);

@@ -59,7 +59,8 @@ void loop() {
 //   delay(WAIT_DELAY);
 //   digitalWrite(FRESH_WATER_VALVE, LOW);
 //   digitalWrite(LED, LOW);
-//   delay(WAIT_DELAY);
+
+   delay(WAIT_DELAY);
 
 
 

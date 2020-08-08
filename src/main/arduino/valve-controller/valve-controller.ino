@@ -63,14 +63,13 @@ void loop() {
    delay(WAIT_DELAY);
 
 
-
    if (digitalRead(DRAIN_PIN) == HIGH) {
 
        digitalWrite(FRESH_WATER_VALVE, LOW);
        digitalWrite(PUMP_VALVE_ON, LOW);
        delay(500);
        digitalWrite(PUMP_VALVE_OFF, HIGH);
-       delay(12000)
+       delay(12000);
        digitalWrite(PUMP_VALVE_OFF, LOW);
        digitalWrite(LED, HIGH);
 
@@ -80,7 +79,7 @@ void loop() {
       digitalWrite(PUMP_VALVE_OFF, LOW);
       delay(500);
       digitalWrite(PUMP_VALVE_ON, HIGH);
-      delay(12000)
+      delay(12000);
       digitalWrite(PUMP_VALVE_ON, LOW);
       digitalWrite(LED, LOW);
 

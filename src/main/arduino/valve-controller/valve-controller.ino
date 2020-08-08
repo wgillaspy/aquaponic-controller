@@ -1,5 +1,5 @@
-#define READ_DELAY 12000
-#define WAIT_DELAY 2000
+#define VALVE_DELAY 10000
+#define WAIT_DELAY 500
 
 
 #define LED  13
@@ -19,6 +19,7 @@
 #define ALL_OFF_PIN A3
 
 int lastDrainValue = -1;
+int lastFillValue = -1;
 
 void setup() {
    pinMode(FRESH_WATER_VALVE, OUTPUT);
@@ -65,35 +66,43 @@ void loop() {
    delay(WAIT_DELAY);
 
    int currentDrainValue = digitalRead(DRAIN_PIN);
+   int currentFillValue =  digitalRead(FILL_PIN);
 
    if (currentDrainValue != lastDrainValue) {
 
        lastDrainValue = currentDrainValue;
     
-       if (digitalRead(DRAIN_PIN) == HIGH) {
-      
+       if (currentDrainValue == HIGH) {
+           digitalWrite(WASTE_WATER_VALVE, HIGH);
            digitalWrite(FRESH_WATER_VALVE, LOW);
            digitalWrite(PUMP_VALVE_ON, LOW);
            delay(500);
            digitalWrite(PUMP_VALVE_OFF, HIGH);
-           delay(12000);
+           delay(VALVE_DELAY);
            digitalWrite(PUMP_VALVE_OFF, LOW);
            digitalWrite(LED, HIGH);
       
        } else {
-      
+          digitalWrite(WASTE_WATER_VALVE, LOW);
           digitalWrite(FRESH_WATER_VALVE, LOW);
           digitalWrite(PUMP_VALVE_OFF, LOW);
           delay(500);
           digitalWrite(PUMP_VALVE_ON, HIGH);
-          delay(12000);
+          delay(VALVE_DELAY);
           digitalWrite(PUMP_VALVE_ON, LOW);
           digitalWrite(LED, LOW);
-      
        }
-
     }
 
+    if (currentFillValue != lastFillValue) {
+        lastFillValue = currentFillValue;
+
+        if (currentFillValue == HIGH) {
+          digitalWrite(FRESH_WATER_VALVE, HIGH);
+        } else {
+          digitalWrite(FRESH_WATER_VALVE, LOW);
+        }
+    }
 
 //   if (digitalRead(FILL_PIN) == HIGH) {
 //      digitalWrite(LED, HIGH);

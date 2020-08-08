@@ -58,6 +58,8 @@ void loop() {
 
    if (digitalRead(DRAIN_PIN) == HIGH) {
          digitalWrite(LED, LOW);
+         digitalWrite(PUMP_VALVE_ON, LOW);
+         delay(500);
          digitalWrite(PUMP_VALVE_OFF, HIGH);
    }
 
@@ -67,6 +69,8 @@ void loop() {
    if (digitalRead(FILL_PIN) == HIGH) {
       digitalWrite(LED, HIGH);
       digitalWrite(PUMP_VALVE_OFF, LOW);
+      delay(500);
+      digitalWrite(PUMP_VALVE_ON, HIGH);
    }
 
 }

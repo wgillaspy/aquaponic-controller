@@ -68,6 +68,7 @@ pipeline {
                         cat Dockerfile.tmp | mo > Dockerfile
 
 
+                        cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
                         export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
                         export DOCKER_TLS_VERIFY=1
 

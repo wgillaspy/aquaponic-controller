@@ -62,6 +62,7 @@ void loop() {
        digitalWrite(PUMP_VALVE_OFF, HIGH);
 
    } else
+      digitalWrite(FRESH_WATER_VALVE, LOW);
       digitalWrite(PUMP_VALVE_OFF, LOW);
       delay(500);
       digitalWrite(PUMP_VALVE_ON, HIGH);

@@ -86,7 +86,9 @@ pipeline {
                         docker build . -t ino:latest
 
                         curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino ${FLAGS}
-                        #curl -X POST  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/start  ${FLAGS}
+
+                        
+                        docker start ino
                         
                     """
 

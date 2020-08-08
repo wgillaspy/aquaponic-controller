@@ -11,8 +11,8 @@
 #define FLOAT_VALVE_HIGH 5
 #define FLOAT_VALVE_LOW  4
 
-#define FILL_PIN = A0;
-#define DRAIN_PIN = A1;
+#define FILL_PIN A0
+#define DRAIN_PIN A1
 
 void setup() {
    pinMode(FRESH_WATER_VALVE, OUTPUT);

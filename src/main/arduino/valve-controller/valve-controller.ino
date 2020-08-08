@@ -54,36 +54,36 @@ void loop() {
 //  //digitalWrite(PUMP_VALVE_ON, LOW);
 //  //digitalWrite(FRESH_WATER_VALVE, HIGH);
 //  digitalWrite(13, LOW);
-   digitalWrite(LED, HIGH);
-   digitalWrite(FRESH_WATER_VALVE, HIGH);
-   delay(WAIT_DELAY);
-   digitalWrite(FRESH_WATER_VALVE, LOW);
-   digitalWrite(LED, LOW);
-   delay(WAIT_DELAY);
+//   digitalWrite(LED, HIGH);
+//   digitalWrite(FRESH_WATER_VALVE, HIGH);
+//   delay(WAIT_DELAY);
+//   digitalWrite(FRESH_WATER_VALVE, LOW);
+//   digitalWrite(LED, LOW);
+//   delay(WAIT_DELAY);
 
 
-//
-//   if (digitalRead(DRAIN_PIN) == HIGH) {
-//
-//       digitalWrite(FRESH_WATER_VALVE, LOW);
-//       digitalWrite(PUMP_VALVE_ON, LOW);
-//       delay(500);
-//       digitalWrite(PUMP_VALVE_OFF, HIGH);
-//       delay(12000)
-//       digitalWrite(PUMP_VALVE_OFF, LOW);
-//       digitalWrite(LED, HIGH);
-//
-//   } else {
-//
-//      digitalWrite(FRESH_WATER_VALVE, LOW);
-//      digitalWrite(PUMP_VALVE_OFF, LOW);
-//      delay(500);
-//      digitalWrite(PUMP_VALVE_ON, HIGH);
-//      delay(12000)
-//      digitalWrite(PUMP_VALVE_ON, LOW);
-//      digitalWrite(LED, LOW);
-//
-//   }
+
+   if (digitalRead(DRAIN_PIN) == HIGH) {
+
+       digitalWrite(FRESH_WATER_VALVE, LOW);
+       digitalWrite(PUMP_VALVE_ON, LOW);
+       delay(500);
+       digitalWrite(PUMP_VALVE_OFF, HIGH);
+       delay(12000)
+       digitalWrite(PUMP_VALVE_OFF, LOW);
+       digitalWrite(LED, HIGH);
+
+   } else {
+
+      digitalWrite(FRESH_WATER_VALVE, LOW);
+      digitalWrite(PUMP_VALVE_OFF, LOW);
+      delay(500);
+      digitalWrite(PUMP_VALVE_ON, HIGH);
+      delay(12000)
+      digitalWrite(PUMP_VALVE_ON, LOW);
+      digitalWrite(LED, LOW);
+
+   }
 
 
 

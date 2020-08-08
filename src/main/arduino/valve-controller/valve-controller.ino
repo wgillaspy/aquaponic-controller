@@ -9,7 +9,7 @@
 #define WASTE_WATER_VALVE  6
 
 #define FLOAT_VALVE_HIGH 5
-#define FLOAT_VALVE_HIGH  4
+#define FLOAT_VALVE_LOW  4
 
 void setup() {
    pinMode(FRESH_WATER_VALVE, OUTPUT);
@@ -18,7 +18,7 @@ void setup() {
    pinMode(WASTE_WATER_VALVE,    OUTPUT);
 
    pinMode(FLOAT_VALVE_HIGH,    INPUT);
-   pinMode(FLOAT_VALVE_HIGH,    INPUT);
+   pinMode(FLOAT_VALVE_LOW,    INPUT);
   
    digitalWrite(FRESH_WATER_VALVE, LOW);
    digitalWrite(PUMP_VALVE_ON,     LOW);

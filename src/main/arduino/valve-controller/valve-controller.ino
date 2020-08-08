@@ -3,8 +3,10 @@
 
 
 #define LED  13
+
 #define FRESH_WATER_VALVE  9
 #define PUMP_VALVE_ON 8
+
 #define PUMP_VALVE_OFF 7
 #define WASTE_WATER_VALVE  6
 
@@ -13,6 +15,7 @@
 
 #define FILL_PIN A0
 #define DRAIN_PIN A1
+#define ALL_OFF_PIN A3
 
 void setup() {
    pinMode(FRESH_WATER_VALVE, OUTPUT);
@@ -57,15 +60,17 @@ void loop() {
    digitalWrite(LED, HIGH);
 
    if (digitalRead(DRAIN_PIN) == HIGH) {
+
        digitalWrite(PUMP_VALVE_ON, LOW);
        delay(500);
        digitalWrite(PUMP_VALVE_OFF, HIGH);
 
-   } else
-      digitalWrite(FRESH_WATER_VALVE, LOW);
+   } else {
+      digitalWrite(FRESH_WATER_VALVE, HIGH);
       digitalWrite(PUMP_VALVE_OFF, LOW);
       delay(500);
       digitalWrite(PUMP_VALVE_ON, HIGH);
+
    }
 
 //   if (digitalRead(DRAIN_PIN) != HIGH && digitalRead(FILL_PIN) != HIGH) {

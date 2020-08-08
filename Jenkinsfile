@@ -56,7 +56,9 @@ pipeline {
 
                     env.INO = "valve-controller.ino"
 
-                    sh """
+                    withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH')]) {
+
+                        sh """
                         cd src/main/arduino
 
                         cat ${INO} | mo > ${INO}.tmp
@@ -65,30 +67,38 @@ pipeline {
                         cat Dockerfile | mo > Dockerfile.tmp
                         cat Dockerfile.tmp | mo > Dockerfile
 
-                        tar -cvf ino.tar ./${INO} ./Dockerfile
 
-                        curl -X DELETE http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino?v=latest
-                        curl -X POST -H  "X-Registry-Auth: ${GITDOCKERCREDENTAILS}" -H 'Content-Type: application/x-tar' --data-binary '@ino.tar' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/build?t=ino:latest
-                        curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino
-                        curl -X POST  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/start
+                        export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
+                        export DOCKER_TLS_VERIFY=1
+
+
+                        
+                        docker rm ino || true
+                        docker build . -t ino:latest
+
+                        #curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino
+                        #curl -X POST  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/start
+                        #curl -X POST  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/start
                     """
 
-                    waitUntil {
-                        script {
+                        waitUntil {
+                            script {
 
-                            CONTANER_STATUS = sh(
-                                    script: "curl -X GET  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/json",
-                                    returnStdout: true
-                            ).trim()
+                                CONTANER_STATUS = sh(
+                                        script: "curl -X GET  -H 'Content-Type: application/json' http://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/json",
+                                        returnStdout: true
+                                ).trim()
 
-                            def containerStatusJson = readJSON text: "${CONTANER_STATUS}"
-                            println containerStatusJson.State.Status
-                            if (containerStatusJson.State.Status == "exited") {
-                                return true
-                            } else {
-                                return false
+                                def containerStatusJson = readJSON text: "${CONTANER_STATUS}"
+                                println containerStatusJson.State.Status
+                                if (containerStatusJson.State.Status == "exited") {
+                                    return true
+                                } else {
+                                    return false
+                                }
                             }
                         }
+
                     }
 
 

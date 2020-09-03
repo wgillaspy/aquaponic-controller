@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="synth_1" LaunchPart="xc7a35tftg256-1" LaunchTime="1597366692">
+  <File Type="PA-TCL" Name="fpga_controller_top.tcl"/>
+  <File Type="RDS-PROPCONSTRS" Name="fpga_controller_top_drc_synth.rpt"/>
+  <File Type="REPORTS-TCL" Name="fpga_controller_top_reports.tcl"/>
+  <File Type="RDS-RDS" Name="fpga_controller_top.vds"/>
+  <File Type="RDS-UTIL" Name="fpga_controller_top_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="fpga_controller_top_utilization_synth.pb"/>
+  <File Type="RDS-DCP" Name="fpga_controller_top.dcp"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="fpga_controller_top_timing_summary_synth.rpt"/>
+  <File Type="VDS-TIMING-PB" Name="fpga_controller_top_timing_summary_synth.pb"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/imports/verilog/button_conditioner_2.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="C:/Users/William/Documents/alchitry/Serial Port Echo/work/verilog/button_conditioner_2.v"/>
+        <Attr Name="ImportTime" Val="1597350468"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/verilog/pipeline_3.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="C:/Users/William/Documents/alchitry/Serial Port Echo/work/verilog/pipeline_3.v"/>
+        <Attr Name="ImportTime" Val="1597350468"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/verilog/pipeline_4.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="C:/Users/William/Documents/alchitry/Serial Port Echo/work/verilog/pipeline_4.v"/>
+        <Attr Name="ImportTime" Val="1597350468"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/verilog/reset_conditioner_1.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="C:/Users/William/Documents/alchitry/Serial Port Echo/work/verilog/reset_conditioner_1.v"/>
+        <Attr Name="ImportTime" Val="1597350468"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/fpga_controller_top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="fpga_controller_top"/>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PSRCDIR/constrs_1/imports/components/alchitry.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="C:/Program Files/Alchitry/Alchitry Labs/library/components/alchitry.xdc"/>
+        <Attr Name="ImportTime" Val="1569357568"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/constrs_1/imports/components/au.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="C:/Program Files/Alchitry/Alchitry Labs/library/components/au.xdc"/>
+        <Attr Name="ImportTime" Val="1569357568"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/constrs_1/imports/alchitryau/valves.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../alchitryau/valves.xdc"/>
+        <Attr Name="ImportTime" Val="1595290607"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="utils" Type="Utils" RelSrcDir="$PSRCDIR/utils_1">
+    <Filter Type="Utils"/>
+    <Config>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2020"/>
+    <Step Id="synth_design"/>
+  </Strategy>
+</GenRun>

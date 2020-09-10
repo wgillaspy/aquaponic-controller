@@ -34,11 +34,11 @@
       "entity_id": "light.plug_four",
       "on_when": {
         "comparator": "<",
-        "value": 6.00
+        "value": 5.50
       },
       "off_when": {
         "comparator": ">",
-        "value": 6.02
+        "value": 5.60
       }
     },
     "conductivity": [

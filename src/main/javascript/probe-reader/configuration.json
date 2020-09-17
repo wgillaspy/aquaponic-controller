@@ -51,9 +51,9 @@
           "value": 5.95
         },
         "wait_before_next_dose": "30m",
-        "amount_per_point": 8.5,
+        "amount_per_point": 20,
         "minimum_amount": 0.6,
-        "max_amount": 10,
+        "max_amount": 30,
         "dose_over_time": 15,
         "dose_over_time_when_greater_than": 5
       }

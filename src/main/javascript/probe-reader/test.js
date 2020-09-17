@@ -5,7 +5,7 @@ const fs = require("fs-extra");
 
 
 const reading = {
-    "pH": "6.887",
+    "pH": "6.88",
     "conductivity": "300"
 };
 

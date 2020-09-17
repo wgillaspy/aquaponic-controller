@@ -140,7 +140,12 @@ const functions = {
 
         if (desiredState === "on") {
             const desiredPoints = configuration[desiredState + "_when"].value;
-            const difference = desiredPoints - reading;
+            let difference = desiredPoints - reading;
+
+            if (difference < 0) {
+                difference = difference * -1;
+            }
+
             let doseAmount = difference * configuration.amount_per_point;
             doseAmount = doseAmount.toFixed(1);
 
@@ -160,7 +165,7 @@ const functions = {
                 functions.ezoRunDose(configuration, doseAmount);
 
             } else {
-                console.log("Dose amount is less than minimum.");
+                console.log(`Dose amount is less than minimum. ${doseAmount} < ${configuration.minimum_amount}`);
             }
         } // Desired state == on.
     },

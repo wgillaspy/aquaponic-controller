@@ -5,8 +5,8 @@ const fs = require("fs-extra");
 
 
 const reading = {
-   // "pH": "5.838",
-    "conductivity": "1086"
+    "pH": "6.887",
+    "conductivity": "300"
 };
 
 setInterval(() => {library.checkValuesAndRunDosingPumps(reading)}, 2000);

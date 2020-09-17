@@ -29,18 +29,35 @@
     }
   ],
   "dosing": {
-    "pH": {
-      "control_type": "home-assist",
-      "entity_id": "light.plug_four",
-      "on_when": {
-        "comparator": "<",
-        "value": 5.50
+    "pH": [
+      {
+        "control_type": "home-assist",
+        "entity_id": "light.plug_four",
+        "on_when": {
+          "comparator": "<",
+          "value": 5.50
+        },
+        "off_when": {
+          "comparator": ">",
+          "value": 5.60
+        }
       },
-      "off_when": {
-        "comparator": ">",
-        "value": 5.60
+      {
+        "splunk_label": "oxalic_acid",
+        "control_type": "ezo-pmp",
+        "address": 94,
+        "on_when": {
+          "comparator": ">",
+          "value": 5.95
+        },
+        "wait_before_next_dose": "30m",
+        "amount_per_point": 5.5,
+        "minimum_amount": 0.6,
+        "max_amount": 10,
+        "dose_over_time": 15,
+        "dose_over_time_when_greater_than": 5
       }
-    },
+    ],
     "conductivity": [
       {
         "splunk_label": "nutrient_one",

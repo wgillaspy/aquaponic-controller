@@ -41,21 +41,6 @@
           "comparator": ">",
           "value": 6.4
         }
-      },
-      {
-        "splunk_label": "oxalic_acid",
-        "control_type": "ezo-pmp",
-        "address": 94,
-        "on_when": {
-          "comparator": ">",
-          "value": 6.6
-        },
-        "wait_before_next_dose": "30m",
-        "amount_per_point": 20,
-        "minimum_amount": 0.6,
-        "max_amount": 30,
-        "dose_over_time": 15,
-        "dose_over_time_when_greater_than": 5
       }
     ],
     "conductivity": [

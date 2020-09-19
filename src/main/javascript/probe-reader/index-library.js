@@ -172,7 +172,7 @@ const functions = {
                 functions.ezoRunDose(configuration, doseAmount);
 
             } else {
-                console.log(`Dose amount is less than minimum. ${doseAmount} < ${configuration.minimum_amount}`);
+                console.log(`${configuration.splunk_label}: Dose amount is less than minimum. ${doseAmount} < ${configuration.minimum_amount}`);
             }
         } // Desired state == on.
     },

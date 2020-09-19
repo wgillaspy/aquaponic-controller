@@ -76,6 +76,8 @@ const functions = {
     },
     "checkValuesAndRunDosingPumps": (reading) => {
 
+        console.log(functions.timeToDoseAgain);
+
         const configuration = fs.readJsonSync('./configuration.json', 'utf8');
 
         Object.keys(reading).forEach(function (key, index) {
@@ -99,23 +101,24 @@ const functions = {
                 for (const dosingConfig of dosingConfigArray) {
 
                     if (dosingConfig.on_when) {
-                        console.log(`${dosingConfig.on_when.comparator}, ${readingValue}, ${dosingConfig.on_when.value}`);
-                        console.log(functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
+                        console.log(`On when Comparison: ${readingValue} ${dosingConfig.on_when.comparator} ${dosingConfig.on_when.value} = `
+                            + functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
+
                         if (functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value)) {
 
                             if (dosingConfig.control_type === "home-assist") {
-                                functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "on");
+                                functions.controlDosingPumpsWithHomeAssist(dosingConfig, "on");
                             } else if (dosingConfig.control_type === "ezo-pmp") {
                                 functions.controlDosingPumpsWithEzo(dosingConfig, readingValue, "on");
                             }
                         }
                     }
                     if (dosingConfig.off_when) {
-                        console.log(`${dosingConfig.off_when.comparator}, ${readingValue}, ${dosingConfig.off_when.value}`);
-                        console.log(functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value));
+                        console.log(`Off when comparison: ${readingValue} ${dosingConfig.off_when.comparator} ${dosingConfig.off_when.value} = `
+                            + functions.doComparison(dosingConfig.on_when.comparator, readingValue, dosingConfig.on_when.value));
                         if (functions.doComparison(dosingConfig.off_when.comparator, readingValue, dosingConfig.off_when.value)) {
                             if (dosingConfig.control_type === "home-assist") {
-                                functions.controlDosingPumpsWithHomeAssist(dosingConfig.entity_id, "off");
+                                functions.controlDosingPumpsWithHomeAssist(dosingConfig, "off");
                             } else if (dosingConfig.control_type === "ezo-pmp") {
                                 functions.controlDosingPumpsWithEzo(dosingConfig, readingValue, "off");
                             }
@@ -156,10 +159,14 @@ const functions = {
                     console.log("Dose amount is greater than minimum.");
                 }
 
-                console.log(configuration.splunk_label + ", dosing: " + doseAmount);
+                console.log("-> Label " + configuration.splunk_label + ", dosing: " + doseAmount);
 
                 const waitValue = configuration.wait_before_next_dose.replace(/\D/g, '');
                 const waitUnit = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
+
+                if (configuration.pause_label) {
+                    functions.timeToDoseAgain[configuration.pause_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
+                }
 
                 functions.timeToDoseAgain[configuration.splunk_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
                 functions.ezoRunDose(configuration, doseAmount);
@@ -191,8 +198,8 @@ const functions = {
         functions.writeSplunkData(splunkJson);
 
         const DOSE_SEND = Buffer.from(command);
-        console.log(command);
-        console.log("Buffer Length: " + DOSE_SEND.length);
+        console.log(`Dose ${configuration.splunk_label}: ${command}`);
+        //console.log("Buffer Length: " + DOSE_SEND.length);
 
         if (!process.env.TESTING) {
             const i2c1 = i2c.openSync(1);
@@ -200,7 +207,30 @@ const functions = {
             i2c1.closeSync();
         }
     },
-    "controlDosingPumpsWithHomeAssist": (deviceName, desiredState) => {
+    "controlDosingPumpsWithHomeAssist": (configuration, desiredState) => {
+
+        if (desiredState === "on") {
+
+            // You may want to pause turning on a dosing pump.  You don't want to pause during it off.
+
+            if (functions.timeToDoseAgain[configuration.entity_id]) {
+
+                const canDoseAgain = moment(functions.timeToDoseAgain[configuration.entity_id], "YYYY-MM-DD HH:mm:ss");
+                const now = moment();
+                //
+                if (now.isBefore(canDoseAgain)) {
+                    console.log(now.format("YYYY-MM-DD HH:mm:ss") + " " + configuration.entity_id + " Waiting to dose. " + functions.timeToDoseAgain[configuration.entity_id]);
+                    return;
+                }
+            }
+
+            // If the device state is on, then you may want to pause another dosing pump.
+            if (configuration.pause_label) {
+                const waitValue = configuration.wait_before_next_dose.replace(/\D/g, '');
+                const waitUnit = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
+                functions.timeToDoseAgain[configuration.pause_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
+            }
+        }
 
         const axiosConfig = {
             headers: {
@@ -208,12 +238,12 @@ const functions = {
                 "Authorization": "Bearer " + process.env.HUE_API_TOKEN
             }
         };
+
         const jsonToWrite = {
-            "entity_id": deviceName
+            "entity_id": configuration.entity_id
         };
 
-
-        const deviceStateUrl = `http://${process.env.HOME_ASSISTANT_API}/api/states/${deviceName}`;
+        const deviceStateUrl = `http://${process.env.HOME_ASSISTANT_API}/api/states/${configuration.entity_id}`;
 
         console.log(deviceStateUrl);
 
@@ -230,6 +260,7 @@ const functions = {
                 if (desiredState === "off") {
                     endpoint = "/api/services/light/turn_off"
                 } else if (desiredState === "on") {
+
                     endpoint = "/api/services/light/turn_on";
                 }
 
@@ -239,7 +270,7 @@ const functions = {
                         axios.post(url, jsonToWrite, axiosConfig).then(stateResult => {
                             console.log(JSON.stringify(stateResult.data, null, 2));
                             functions.writeSplunkData({
-                                "deviceName": deviceName,
+                                "deviceName": configuration.entity_id,
                                 "state": desiredState
                             });
                         }).catch(offExecption => {

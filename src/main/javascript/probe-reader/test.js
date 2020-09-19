@@ -9,7 +9,12 @@ const reading = {
     "conductivity": "300"
 };
 
-setInterval(() => {library.checkValuesAndRunDosingPumps(reading)}, 2000);
+setInterval(() => {
+    library.checkValuesAndRunDosingPumps(reading)
+    if (reading.pH > 4) {
+        reading.pH = reading.pH - .1
+    }
+}, 2000);
 
 //library.setupCronTabSchedule();
 

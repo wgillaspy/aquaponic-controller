@@ -1,124 +1,280 @@
-#define VALVE_DELAY 10000
-#define WAIT_DELAY 500
+#include <ArduinoJson.h>
+
+#define VALVE_OPEN_CLOSE_DELAY 10000
+#define WAIT_DELAY 100
 
 
-#define LED  13
+#define LED_AND_POWER_INDICATOR           13
 
-#define FRESH_WATER_VALVE  9
-#define PUMP_VALVE_ON 8
+#define LED_ONE   A5
+#define LED_TWO   A4
+#define LED_THREE A3
 
-#define PUMP_VALVE_OFF 7
+int LED_VALUE = 130;
 
-#define WASTE_WATER_VALVE  6
+// The valves
+#define FRESH_WATER_VALVE                 12
+#define WASTE_WATER_VALVE                 11
+#define FLOW_WATER_VALVE_POLARITY         10
+#define FLOW_WATER_VALVE_ON_OFF            9
 
-#define FLOAT_VALVE_HIGH 5
-#define FLOAT_VALVE_LOW  4
+// The buttons
+#define BUTTON_GREEN   A0
+#define BUTTON_YELLOW  A1
+#define BUTTON_RED     A2
 
-#define FILL_PIN A0
-#define DRAIN_PIN A1
-#define ALL_OFF_PIN A3
+// The float switch inputs
+#define FLOAT_SWITCH_LOWER 8
+#define FLOAT_SWITCH_UPPER 7
 
-int lastDrainValue = -1;
-int lastFillValue = -1;
+
+// OLD BELOW / USED ABOVE
+
+boolean flowWaterStatus = true;
+
+boolean waterChange = false;
+
+int loopCount = 0;
+int  freshWaterValveState = 0;
+int wasteWaterValveState = 0;
+int flowValveState = 0;
+
+int floatSwitchLowerValue = 0;
+int floatSwitchUpperValue = 0;
+
+boolean override = false;
+
+
+
 
 void setup() {
+
+   Serial.begin(9600);
+
+   pinMode(LED_ONE, OUTPUT);
+   pinMode(LED_TWO, OUTPUT);
+   pinMode(LED_THREE, OUTPUT);
+
+   analogWrite(LED_ONE, 0);
+   analogWrite(LED_TWO, 0);
+   analogWrite(LED_THREE, 0);
+  
+   pinMode(LED_AND_POWER_INDICATOR, OUTPUT);
+   digitalWrite(LED_AND_POWER_INDICATOR, HIGH);
+
    pinMode(FRESH_WATER_VALVE, OUTPUT);
-   pinMode(PUMP_VALVE_ON,     OUTPUT);
-   pinMode(PUMP_VALVE_OFF,    OUTPUT);
-   pinMode(WASTE_WATER_VALVE,    OUTPUT);
-
-   pinMode(FLOAT_VALVE_HIGH,    INPUT);
-   pinMode(FLOAT_VALVE_LOW,    INPUT);
-
-
-   pinMode(FILL_PIN,    INPUT);
-   pinMode(DRAIN_PIN,    INPUT);
-
    digitalWrite(FRESH_WATER_VALVE, LOW);
-   digitalWrite(PUMP_VALVE_ON,     LOW);
-   digitalWrite(PUMP_VALVE_OFF,    LOW);
+
+   pinMode(WASTE_WATER_VALVE, OUTPUT);
    digitalWrite(WASTE_WATER_VALVE, LOW);
 
-   digitalWrite(FILL_PIN, LOW);
-   digitalWrite(DRAIN_PIN, LOW);
+   pinMode(FLOW_WATER_VALVE_POLARITY, OUTPUT);
+   digitalWrite(FLOW_WATER_VALVE_ON_OFF, LOW);
+
+   pinMode(FLOW_WATER_VALVE_ON_OFF, OUTPUT);
+   digitalWrite(FLOW_WATER_VALVE_ON_OFF, LOW);
+
+   pinMode(BUTTON_GREEN, INPUT);
+   pinMode(BUTTON_YELLOW, INPUT);
+   pinMode(BUTTON_RED, INPUT);
+
+   pinMode(FLOAT_SWITCH_LOWER, INPUT);
+   pinMode(FLOAT_SWITCH_UPPER, INPUT);
+
+   turnOnFlowValve();
 }
 
 void loop() {
 
-//  delay(READ_DELAY);
-//  digitalWrite(PUMP_VALVE_OFF, LOW);
-//  delay(WAIT_DELAY);
-//  digitalWrite(PUMP_VALVE_ON, HIGH);
-//  digitalWrite(13, HIGH);
-//  delay(READ_DELAY);
-//  digitalWrite(PUMP_VALVE_ON, LOW);
-//  delay(WAIT_DELAY);
-//  digitalWrite(PUMP_VALVE_OFF, HIGH);
-//  //digitalWrite(PUMP_VALVE_ON, LOW);
-//  //digitalWrite(FRESH_WATER_VALVE, HIGH);
-//  digitalWrite(13, LOW);
-//   digitalWrite(LED, HIGH);
-//   digitalWrite(FRESH_WATER_VALVE, HIGH);
-//   delay(WAIT_DELAY);
-//   digitalWrite(FRESH_WATER_VALVE, LOW);
-//   digitalWrite(LED, LOW);
+  loopCount++;
+  delay(WAIT_DELAY);
 
-   delay(WAIT_DELAY);
-
-   int currentDrainValue = digitalRead(DRAIN_PIN);
-   int currentFillValue =  digitalRead(FILL_PIN);
-
-   if (currentDrainValue != lastDrainValue) {
-
-       lastDrainValue = currentDrainValue;
+  if (Serial.available() > 0) {
+    // read the incoming byte:
+    String incomingJson = Serial.readString();
+    readJsonAndDoAction(incomingJson);
     
-       if (currentDrainValue == HIGH) {
-           digitalWrite(WASTE_WATER_VALVE, HIGH);
-           digitalWrite(FRESH_WATER_VALVE, LOW);
-           digitalWrite(PUMP_VALVE_ON, LOW);
-           delay(500);
-           digitalWrite(PUMP_VALVE_OFF, HIGH);
-           delay(VALVE_DELAY);
-           digitalWrite(PUMP_VALVE_OFF, LOW);
-           digitalWrite(LED, HIGH);
-      
-       } else {
-          digitalWrite(WASTE_WATER_VALVE, LOW);
-          digitalWrite(FRESH_WATER_VALVE, LOW);
-          digitalWrite(PUMP_VALVE_OFF, LOW);
-          delay(500);
-          digitalWrite(PUMP_VALVE_ON, HIGH);
-          delay(VALVE_DELAY);
-          digitalWrite(PUMP_VALVE_ON, LOW);
-          digitalWrite(LED, LOW);
-       }
+  }
+
+   floatSwitchLowerValue = digitalRead(FLOAT_SWITCH_LOWER);
+   floatSwitchUpperValue = digitalRead(FLOAT_SWITCH_UPPER);
+   
+   int buttonGreenValue = digitalRead(BUTTON_GREEN);
+   int buttonYellowValue = digitalRead(BUTTON_YELLOW);
+   int buttonRedValue = digitalRead(BUTTON_RED);
+
+   if (buttonGreenValue > 0) {
+     override = false;
+     toggleFreshWaterValue(buttonGreenValue);
+   } else {
+     if (!override) {
+      toggleFreshWaterValue(buttonGreenValue);
+     }
+   }
+
+   if (buttonYellowValue > 0) {
+     override = false;
+     if (flowWaterStatus) {
+       turnOffFlowValve();
+     } else {
+       turnOnFlowValve();
+     }
+   }
+
+   if (buttonRedValue > 0) {
+     override = false;
+     toggleWasteWaterValue(buttonRedValue);
+   } else {
+    if (!override) {
+     toggleWasteWaterValue(buttonRedValue);
+    }
+   }
+
+   if (loopCount > 10) {
+     serialWriteJsonValues();
+     loopCount = 0;
+  }
+}
+
+void indicatorLedOn(int LED) {
+  analogWrite(LED, LED_VALUE);
+}
+
+void indicatorLedOff(int LED) {
+  analogWrite(LED, 0);
+}
+
+void readJsonAndDoAction(String inputJson) {
+    StaticJsonDocument<400> doc;
+    DeserializationError error = deserializeJson(doc, inputJson);
+    // Test if parsing succeeds.
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.c_str());
+      return;
+    }
+    int desiredflowValveState = doc["fvs"];
+    int desiredFreshwaterValveState = doc["fws"];
+    int desiredWasteWaterValveState = doc["wws"];;
+
+
+
+    toggleFreshWaterValue(desiredFreshwaterValveState);
+    toggleWasteWaterValue(desiredWasteWaterValveState);
+
+    if (desiredflowValveState > 0) {
+      turnOnFlowValve();
+    } else {
+      turnOffFlowValve();
     }
 
-    if (currentFillValue != lastFillValue) {
-        lastFillValue = currentFillValue;
-
-        if (currentFillValue == HIGH) {
-          digitalWrite(FRESH_WATER_VALVE, HIGH);
-        } else {
-          digitalWrite(FRESH_WATER_VALVE, LOW);
-        }
-    }
-
-//   if (digitalRead(FILL_PIN) == HIGH) {
-//      digitalWrite(LED, HIGH);
-//      digitalWrite(PUMP_VALVE_ON, HIGH);
-//      delay(500);
-//      digitalWrite(PUMP_VALVE_OFF, LOW);
-//
-//   }
+    override = true;
 
 }
 
-void waterChange() {
+void serialWriteJsonValues() {
+      String sendJson = "";
+
+      String floatSwitchLowerJson = getJsonPair("fsl", floatSwitchLowerValue);
+      String floatSwitchUpperJson = getJsonPair("fsu", floatSwitchUpperValue);
+      String flowValveStateJson = getJsonPair("fvs",   flowValveState);
+
+      String freshWaterValveStateJson = getJsonPair("fws", freshWaterValveState);
+      String wasteWaterValveStateJson = getJsonPair("wws", wasteWaterValveState);
+
+      sendJson = addToJsonString(sendJson, floatSwitchLowerJson);
+      sendJson = addToJsonString(sendJson, floatSwitchUpperJson);
+      sendJson = addToJsonString(sendJson, flowValveStateJson);
+      sendJson = addToJsonString(sendJson, freshWaterValveStateJson);
+      sendJson = addToJsonString(sendJson, wasteWaterValveStateJson);
+
+      Serial.println(sendJson);
+}
+
+void toggleFreshWaterValue(int state) {
+    if (state > 0) {
+      indicatorLedOn(LED_ONE);
+      digitalWrite(FRESH_WATER_VALVE, HIGH);
+      
+    } else {
+      indicatorLedOff(LED_ONE);
+      digitalWrite(FRESH_WATER_VALVE, LOW);
+    }
+    freshWaterValveState = state;
+}
+
+void toggleWasteWaterValue(int state) {
+    if (state > 0) {
+      indicatorLedOn(LED_TWO);
+      digitalWrite(WASTE_WATER_VALVE, HIGH);
+      
+    } else {
+      indicatorLedOff(LED_TWO);
+      digitalWrite(WASTE_WATER_VALVE, LOW);
+    }
+    wasteWaterValveState = state;
+}
 
 
-  
+void turnOffFlowValve() {
+    indicatorLedOn(LED_THREE);
+    digitalWrite(FLOW_WATER_VALVE_ON_OFF, LOW);
+    delay(WAIT_DELAY);
+    digitalWrite(FLOW_WATER_VALVE_POLARITY, LOW);
+    delay(WAIT_DELAY);
+    digitalWrite(FLOW_WATER_VALVE_ON_OFF, HIGH);
+    delay(VALVE_OPEN_CLOSE_DELAY);
+    digitalWrite(FLOW_WATER_VALVE_ON_OFF, LOW);
+    flowWaterStatus = false;
+    flowValveState = 0;
+}
 
-    
-  
+void turnOnFlowValve() {
+    indicatorLedOff(LED_THREE);
+    digitalWrite(FLOW_WATER_VALVE_ON_OFF, LOW);
+    delay(WAIT_DELAY);
+    digitalWrite(FLOW_WATER_VALVE_POLARITY, HIGH);
+    delay(WAIT_DELAY);
+    digitalWrite(FLOW_WATER_VALVE_ON_OFF, HIGH);
+    delay(VALVE_OPEN_CLOSE_DELAY);
+    digitalWrite(FLOW_WATER_VALVE_ON_OFF, LOW);
+    digitalWrite(FLOW_WATER_VALVE_POLARITY, LOW);
+    flowWaterStatus = true;
+    flowValveState = 1;
+}
+
+String addToJsonString(String json, String add_json) {
+  if (json.length() == 0) {
+     return "{" + add_json + "}";
+  } else {
+    json.remove(json.length() - 1);
+    return json + "," + add_json + "}";
+  }
+}
+
+String getJsonPair(String name, String value) {
+  String json = "\"" + name + "\":\"";
+  json.concat(value);
+  json.concat("\"");
+  return json;
+}
+
+String getJsonPair(String name, float value) {
+  String json = "\"" + name + "\":\"";
+  json.concat(value);
+  json.concat("\"");
+  return json;
+}
+
+String getJsonPair(String name, double value) {
+  String json = "\"" + name + "\":\"";
+  json.concat(value);
+  json.concat("\"");
+  return json;
+}
+
+String getJsonPair(String name, int value) {
+  String json = "\"" + name + "\":";
+  json.concat(value);
+  return json;
 }

@@ -14,6 +14,11 @@
         "PathOnHost": "/dev/i2c-1",
         "PathInContainer": "/dev/i2c-1",
         "CgroupPermissions": "rwm"
+      },
+      {
+        "PathOnHost": "/dev/ino",
+        "PathInContainer": "/dev/ino",
+        "CgroupPermissions": "rwm"
       }
     ],
     "RestartPolicy": { "Name": "always" }

@@ -44,80 +44,80 @@ pipeline {
                 }
             }
         }
-        stage("Compile and deploy valve sketch") {
-            when {
-                expression {
-                    INO_VALVE_CHANGED == "yes"
-                }
-            }
-            steps {
-                script {
-
-
-                    env.INO = "valve-controller.ino"
-
-                    withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH'),
-                                     usernamePassword(credentialsId: 'GITHUBUSER_TOKENPASS', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-
-                        FLAGS = "--insecure --cert ${LOCAL_DOCKER_CERT_PATH}/cert.pem --key ${LOCAL_DOCKER_CERT_PATH}/key.pem  --cacert ${LOCAL_DOCKER_CERT_PATH}/ca.pem"
-
-                    sh """
-
-
-
-                        cd src/main/arduino/valve-controller
-
-                        cat ${INO} | mo > ${INO}.tmp
-                        mv -f ${INO}.tmp ${INO}
-
-                        cat Dockerfile | mo > Dockerfile.tmp
-                        cat Dockerfile.tmp | mo > Dockerfile
-
-
-                        cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
-                        export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
-                        export DOCKER_TLS_VERIFY=1
-
-                        docker login docker.pkg.github.com -u ${USER} -p ${PASS}
-
-
-                        
-                        docker rm ino || true
-                        docker build . -t ino:latest
-
-                        curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino ${FLAGS}
-
-                        
-                        docker start ino
-                        
-                    """
-
-                        waitUntil {
-                            script {
-
-                                CONTANER_STATUS = sh(
-                                        script: "curl -X GET  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/json ${FLAGS}",
-                                        returnStdout: true
-                                ).trim()
-
-                                def containerStatusJson = readJSON text: "${CONTANER_STATUS}"
-                                println containerStatusJson.State.Status
-                                if (containerStatusJson.State.Status == "exited") {
-                                    return true
-                                } else {
-                                    return false
-                                }
-                            }
-                        }
-
-                    }
-
-
-
-                    sleep(10)
-                }
-            }
-        }
+//        stage("Compile and deploy valve sketch") {
+//            when {
+//                expression {
+//                    INO_VALVE_CHANGED == "yes"
+//                }
+//            }
+//            steps {
+//                script {
+//
+//
+//                    env.INO = "valve-controller.ino"
+//
+//                    withCredentials([dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH'),
+//                                     usernamePassword(credentialsId: 'GITHUBUSER_TOKENPASS', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+//
+//                        FLAGS = "--insecure --cert ${LOCAL_DOCKER_CERT_PATH}/cert.pem --key ${LOCAL_DOCKER_CERT_PATH}/key.pem  --cacert ${LOCAL_DOCKER_CERT_PATH}/ca.pem"
+//
+//                    sh """
+//
+//
+//
+//                        cd src/main/arduino/valve-controller
+//
+//                        cat ${INO} | mo > ${INO}.tmp
+//                        mv -f ${INO}.tmp ${INO}
+//
+//                        cat Dockerfile | mo > Dockerfile.tmp
+//                        cat Dockerfile.tmp | mo > Dockerfile
+//
+//
+//                        cp ${LOCAL_DOCKER_CERT_PATH}/* ~/.docker
+//                        export DOCKER_HOST=tcp://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}
+//                        export DOCKER_TLS_VERIFY=1
+//
+//                        docker login docker.pkg.github.com -u ${USER} -p ${PASS}
+//
+//
+//
+//                        docker rm ino || true
+//                        docker build . -t ino:latest
+//
+//                        curl -X POST  -H 'Content-Type: application/json' --data-binary '@deploy-container.json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/create?name=ino ${FLAGS}
+//
+//
+//                        docker start ino
+//
+//                    """
+//
+//                        waitUntil {
+//                            script {
+//
+//                                CONTANER_STATUS = sh(
+//                                        script: "curl -X GET  -H 'Content-Type: application/json' https://${IOT_AQUAPONIC_IP_AND_DOCKER_PORT}/containers/ino/json ${FLAGS}",
+//                                        returnStdout: true
+//                                ).trim()
+//
+//                                def containerStatusJson = readJSON text: "${CONTANER_STATUS}"
+//                                println containerStatusJson.State.Status
+//                                if (containerStatusJson.State.Status == "exited") {
+//                                    return true
+//                                } else {
+//                                    return false
+//                                }
+//                            }
+//                        }
+//
+//                    }
+//
+//
+//
+//                    sleep(10)
+//                }
+//            }
+//        }
 
         stage('Deploy the nodejs controller application') {
             steps {

@@ -16,7 +16,7 @@ setInterval(function() {
     });
 }, configuration.loop_time_in_milis);
 
-const arduinoPort = new SerialPort('/dev/inor', {
+const arduinoPort = new SerialPort('/dev/ino', {
     baudRate: 9600
 });
 

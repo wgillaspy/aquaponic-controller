@@ -2,6 +2,7 @@ module au_top (
     input clk,              // 100MHz clock
     input rst_n,            // reset button (active low)
     output led [8],
+    input mc_available,
     input mc_fresh_water_input,
     input mc_pump_on_input,
     input mc_pump_off_input,
@@ -34,7 +35,9 @@ module au_top (
     button_conditioner float_valve_low_input_conditioned;
     button_conditioner float_valve_high_input_conditioned;
 
-    pipeline waiting_pump_on(#DEPTH(10000));
+    button_conditioner mc_available_input_conditioned;
+
+    //pipeline waiting_pump_on(#DEPTH(10000));
   }
 
 
@@ -46,9 +49,13 @@ module au_top (
     led = 8h00;
     polor_relay = hFF;
     pump_on_off_relay = hFF;
+    waste_water_relay = hFF;
 
     float_valve_low_output = hFF;
     float_valve_high_output = hFF;
+
+    mc_available_input_conditioned.in = mc_available;
+
 
     float_valve_low_input_conditioned.in = float_valve_low_input;
     float_valve_high_input_conditioned.in = float_valve_high_input;
@@ -60,28 +67,38 @@ module au_top (
     mc_float_high_indicator = float_valve_high_input_conditioned.out;
 
     mc_fresh_water_input_conditioned.in = mc_fresh_water_input;
-    mc_waste_water_input_conditioned.in = mc_waste_water_input;
+    led[2] = mc_fresh_water_input_conditioned.out;
 
-    if (mc_fresh_water_input_conditioned.out | float_valve_low_input_conditioned.out) {
+     mc_waste_water_input_conditioned.in = mc_waste_water_input;
+     led[3] = mc_waste_water_input_conditioned.out;
+
+    // FRESH WATER SECTION
+    if (float_valve_low_input_conditioned.out || (mc_fresh_water_input_conditioned.out && mc_available_input_conditioned.out)) {
       fresh_water_relay = h00;
     } else {
       fresh_water_relay = hFF;
     }
+    // /FRESH WATER SECTION
 
-    waste_water_relay = ~2x{mc_waste_water_input_conditioned.out};
 
-    mc_pump_on_input_conditioned.in = mc_pump_on_input;
-    mc_pump_off_input_conditioned.in = mc_pump_off_input;
-
-    polor_relay = ~2x{mc_pump_off_input_conditioned.out};
-
-    waiting_pump_on.in = (mc_pump_on_input_conditioned.out | mc_pump_off_input_conditioned.out);
-    if (waiting_pump_on.out) {
-      pump_on_off_relay[0] = h00;
-      pump_on_off_relay[1] = h00;
+    // WASTE_WATER_SECTION
+    if (float_valve_high_input_conditioned.out || (mc_waste_water_input_conditioned.out && mc_available_input_conditioned.out)) {
+      waste_water_relay = h00;
     } else {
-      pump_on_off_relay[0] = hFF;
-      pump_on_off_relay[1] = hFF;
+      waste_water_relay = hFF;
     }
+    // /WASTE_WATER_SECTION
+
+
+    // POLAR VALUE SECTION
+    mc_pump_on_input_conditioned.in = mc_pump_on_input;
+    led[4] = mc_pump_on_input_conditioned.out;
+    polor_relay = ~2x{mc_pump_on_input_conditioned.out && mc_available_input_conditioned.out };
+
+    mc_pump_off_input_conditioned.in = mc_pump_off_input;
+    led[5] = mc_pump_off_input_conditioned.out;
+    pump_on_off_relay = ~2x{mc_pump_off_input_conditioned.out && mc_available_input_conditioned.out};
+
+    // /POLAR VALUE SECTION
   }
 }

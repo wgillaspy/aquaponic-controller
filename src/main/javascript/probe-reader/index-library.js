@@ -79,7 +79,7 @@ const functions = {
 
     "waterChange": async (desiredConductivity) => {
 
-        console.log(`Ending call to water change. Allowing dosing: ${functions.getAllowedDosing()}`);
+        console.log(`Starting water change to conductivity: ${desiredConductivity}. Allowing dosing: ${functions.getAllowedDosing()}`);
 
         if (functions.lastProbeValues.conductivity) {
 
@@ -182,12 +182,30 @@ const functions = {
         functions.lastProbeValues = objectToReturn;
         return objectToReturn;
     },
-    "setupCronTabSchedule": () => {
+
+    "setupWaterChangeCronTabSchedule": () => {
+
+        const configuration = fs.readJsonSync('./configuration.json', 'utf8');
+
+        Object.keys(configuration.water_change_scheduled).forEach(function (key, index) {
+            console.log("Setting up waterchange crontab: " + key);
+
+            const waterChangeConfig = configuration.water_change_scheduled[key];
+
+            const job = new CronJob(waterChangeConfig.cron_pattern, function () {
+                functions.waterChange(waterChangeConfig.target_conductivity);
+            }, null, true);
+
+            job.start();
+        });
+    },
+
+    "setupDosingCronTabSchedule": () => {
 
         const configuration = fs.readJsonSync('./configuration.json', 'utf8');
 
         Object.keys(configuration.dosing_scheduled).forEach(function (key, index) {
-            console.log("Setting up crontab: " + key);
+            console.log("Setting up dosing crontab: " + key);
 
             const dosingConfig = configuration.dosing_scheduled[key];
 

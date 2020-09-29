@@ -94,10 +94,10 @@
       }
     ]
   },
-  "water_change_schedule": {
+  "water_change_scheduled": {
     "daily": {
       "target_conductivity": 1300,
-      "cron_pattern": "0 7 * * * *"
+      "cron_pattern": "* * * * * *"
     },
     "biweekly" : {
       "target_conductivity": 900,

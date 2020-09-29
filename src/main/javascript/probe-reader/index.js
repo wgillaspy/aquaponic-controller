@@ -5,7 +5,8 @@ const fs = require("fs-extra");
 
 const configuration = fs.readJsonSync('./configuration.json', 'utf8');
 
-library.setupCronTabSchedule();
+library.setupDosingCronTabSchedule();
+library.setupWaterChangeCronTabSchedule();
 
 setInterval(function() {
     library.readConfiguredProbesSync().then(result => {
@@ -16,10 +17,4 @@ setInterval(function() {
 }, configuration.loop_time_in_milis);
 
 library.serialStartRead();
-
-console.log("Will request water change in 20 seconds.");
-setTimeout(function() {
-    console.log("Water change starting");
-    library.waterChange(1290);
-}, 20000);
 

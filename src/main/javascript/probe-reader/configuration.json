@@ -103,7 +103,7 @@
     },
     "weekly" : {
       "target_conductivity": 900,
-      "cron_pattern": "0 13 * * 0 *",
+      "cron_pattern": "0 0 13 * * 0",
       "wait_before_next_dose": "15m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]
     }

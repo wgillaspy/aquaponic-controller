@@ -77,7 +77,9 @@ const functions = {
         });
     },
 
-    "waterChange": async (desiredConductivity) => {
+    "waterChange": async (configuration) => {
+
+        const desiredConductivity = configuration.target_conductivity;
 
         console.log(`Starting water change to conductivity: ${desiredConductivity}. Allowing dosing: ${functions.getAllowedDosing()}`);
 
@@ -105,11 +107,23 @@ const functions = {
                     // for the lost water.
                     await functions.waterChangeWaitForValue(desiredConductivity);
 
+                    const waitValue = configuration.wait_before_next_dose.replace(/\D/g, '');
+                    const waitUnit = configuration.wait_before_next_dose.replace(/[0-9]/g, '');
+
+                    if (configuration.pause_labels) {
+
+                        for (const pause_label of configuration.pause_labels) {
+                            functions.timeToDoseAgain[pause_label] = moment().add(waitValue, waitUnit).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                    }
+
                     arduinoPort.write(JSON.stringify(turnOffWaterWaterValve), function (error) {
                         if (error) {
                             console.log(error);
                         }
                     });
+
+
 
                 } catch (err) {
                     console.log("Water change error");
@@ -193,7 +207,7 @@ const functions = {
             const waterChangeConfig = configuration.water_change_scheduled[key];
 
             const job = new CronJob(waterChangeConfig.cron_pattern, function () {
-                functions.waterChange(waterChangeConfig.target_conductivity);
+                functions.waterChange(waterChangeConfig);
             }, null, true);
 
             job.start();

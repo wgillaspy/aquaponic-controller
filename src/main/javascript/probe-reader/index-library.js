@@ -42,7 +42,7 @@ const functions = {
     "lastProbeValues": {},
     "allowDosing": true,
     "getAllowedDosing" : ()  => {
-        return false;
+        return functions.allowDosing;
     },
     "slowValveLog": (json) => {
         if (functions.valveLogCount > 6) {

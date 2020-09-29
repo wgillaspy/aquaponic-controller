@@ -96,8 +96,8 @@
   },
   "water_change_scheduled": {
     "daily": {
-      "target_conductivity": 1300,
-      "cron_pattern": "0 * * * * 1,2,3,4,5",
+      "target_conductivity": 1200,
+      "cron_pattern": "0 15 17 * * 1,2,3,4,5",
       "wait_before_next_dose": "15m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]
     },

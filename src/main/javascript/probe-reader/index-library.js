@@ -20,7 +20,7 @@ const functions = {
     "timeToDoseAgain": {},
     "valveLogCount" : 0,
     "slowValveLog" : (json) => {
-        if (functions.valveLogCount > 10) {
+        if (functions.valveLogCount > 6) {
             console.log(JSON.stringify(json));
             functions.valveLogCount = 0;
         }

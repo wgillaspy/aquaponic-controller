@@ -6,6 +6,9 @@ const fs = require("fs-extra");
 const axios = require("axios");
 const moment = require("moment");
 
+const SerialPort = require('serialport');
+const Readline = require('@serialport/parser-readline');
+
 const CronJob = require('cron').CronJob;
 
 const BUFFER_LENGTH = 32;
@@ -14,16 +17,55 @@ const READ_CMD = 0x52;
 
 const functions = {
 
-    "timeToDoseAgain" : {},
+    "timeToDoseAgain": {},
+    "valveLogCount" : 0,
+    "slowValveLog" : (json) => {
+        if (functions.valveLogCount > 10) {
+            console.log(JSON.stringify(json));
+            functions.valveLogCount = 0;
+        }
+        functions.valveLogCount++;
+    },
+
+
     "wait": async (amount) => {
         await new Promise(function (resolve, reject) {
             setTimeout(resolve, amount);
         });
     },
 
+    "serialRead": () => {
+
+        const arduinoPort = new SerialPort('/dev/ino', {
+            baudRate: 9600
+        });
+
+        const serialParser = arduinoPort.pipe(new Readline({delimiter: '\r\n'}));
+
+        // const exampleJson = {
+        //     "fsl": 0,  // Float switch status (lower)
+        //     "fsu": 0,  // Float switch status (upper)
+        //     "fvs": 1,  // Flow valve on or off
+        //     "fws": 0,  // Fresh water valve on or off
+        //     "wws": 0   // Waste water valve on or off
+        // };
+
+        serialParser.on('data', function (data) {
+            try {
+                const json = JSON.parse(data);
+                functions.slowValveLog(json);
+            } catch (exception) {
+                console.log("Json Parse Error:");
+                console.log(exception);
+            }
+        });
+
+    },
+
     "readConfiguredProbesSync": async () => {
         return await functions.readConfiguredProbes();
     },
+
     "readConfiguredProbes": async () => {
 
         const configuration = fs.readJsonSync('./configuration.json', 'utf8');

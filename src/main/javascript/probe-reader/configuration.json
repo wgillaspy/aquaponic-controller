@@ -33,7 +33,7 @@
       {
         "control_type": "home-assist",
         "entity_id": "light.plug_four",
-        "pause_label" : "phosphoric_acid",
+        "pause_label": "phosphoric_acid",
         "wait_before_next_dose": "30m",
         "on_when": {
           "comparator": "<",
@@ -46,7 +46,7 @@
       },
       {
         "splunk_label": "phosphoric_acid",
-        "pause_label" : "light.plug_four",
+        "pause_label": "light.plug_four",
         "control_type": "ezo-pmp",
         "address": 94,
         "on_when": {
@@ -93,6 +93,16 @@
         "dose_over_time_when_greater_than": 15
       }
     ]
+  },
+  "water_change_schedule": {
+    "daily": {
+      "target_conductivity": 1300,
+      "cron_pattern": "0 7 * * * *"
+    },
+    "biweekly" : {
+      "target_conductivity": 900,
+      "cron_pattern": "0 13 * * 0 *"
+    }
   },
   "dosing_scheduled": {
     "fe_and_mg": {

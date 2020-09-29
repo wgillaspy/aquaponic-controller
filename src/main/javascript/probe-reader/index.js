@@ -17,6 +17,9 @@ setInterval(function() {
 
 library.serialStartRead();
 
-console.log("Will request water change in 20 seconds.")
-setTimeout(library.waterChange(1290), 20000);
+console.log("Will request water change in 20 seconds.");
+setTimeout(function() {
+    console.log("Water change starting");
+    library.waterChange(1290);
+}, 20000);
 

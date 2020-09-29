@@ -15,5 +15,8 @@ setInterval(function() {
     });
 }, configuration.loop_time_in_milis);
 
-library.serialRead();
+library.serialStartRead();
+
+console.log("Will request water change in 20 seconds.")
+setTimeout(library.waterChange(1290), 20000);
 

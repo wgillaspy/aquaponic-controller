@@ -11,15 +11,40 @@ const Readline = require('@serialport/parser-readline');
 
 const CronJob = require('cron').CronJob;
 
+const EventEmitter = require('eventemitter3');
+
 const BUFFER_LENGTH = 32;
 const INFO_CMD = 0x49;
 const READ_CMD = 0x52;
 
+
+let arduinoPort = {};
+let serialParser = {};
+if (!process.env.TESTING) {
+    arduinoPort = new SerialPort('/dev/ino', {
+        baudRate: 9600
+    });
+    serialParser = arduinoPort.pipe(new Readline({delimiter: '\r\n'}));
+} else {
+    arduinoPort = {
+        "write" : (string, callback) => {
+            console.log("Want to write: " + string);
+        }
+    }
+}
+
+
 const functions = {
 
     "timeToDoseAgain": {},
-    "valveLogCount" : 0,
-    "slowValveLog" : (json) => {
+    "valveLogCount": 0,
+    "valveStatusObject": {},
+    "lastProbeValues": {},
+    "allowDosing": true,
+    "getAllowedDosing" : ()  => {
+        return false;
+    },
+    "slowValveLog": (json) => {
         if (functions.valveLogCount > 6) {
             console.log(JSON.stringify(json));
             functions.valveLogCount = 0;
@@ -34,13 +59,79 @@ const functions = {
         });
     },
 
-    "serialRead": () => {
+    "waterChangeWaitForValue": async (desiredConductivity) => {
 
-        const arduinoPort = new SerialPort('/dev/ino', {
-            baudRate: 9600
+        return new Promise(resolve => {
+
+            function loop() {
+                if (functions.lastProbeValues.conductivity < desiredConductivity) {
+                    resolve();
+                } else {
+                    console.log(`Water change: ${functions.lastProbeValues.conductivity} < ${desiredConductivity} = false`);
+                    setTimeout(loop, 1000);
+                }
+            }
+
+            loop();
+
         });
+    },
 
-        const serialParser = arduinoPort.pipe(new Readline({delimiter: '\r\n'}));
+    "waterChange": async (desiredConductivity) => {
+
+        console.log(`Ending call to water change. Allowing dosing: ${functions.getAllowedDosing()}`);
+
+        if (functions.lastProbeValues.conductivity) {
+
+            if (functions.lastProbeValues.conductivity > desiredConductivity) {
+                try {
+                    // Turn off all the dosing so we don't waste nutrient chasing the desired dosing values.
+                    functions.allowDosing = false;
+
+                    console.log(`Allowing dosing: ${functions.getAllowedDosing()}`);
+
+                    const turnOnWasteWaterValve = {"fvs": 1, "fws": 0, "wws": 1};
+                    const turnOffWaterWaterValve = {"fvs": 1, "fws": 0, "wws": 0};
+
+                    arduinoPort.write(JSON.stringify(turnOnWasteWaterValve), function (error) {
+                        if (error) {
+                            console.log(error);
+                        }
+                    });
+
+                    // The idea here is that we simply turn on the waste water valve.
+                    // The FPGA will notice when the low water float switch activates
+                    // and will automatically turn on the fresh water valve to make up
+                    // for the lost water.
+                    await functions.waterChangeWaitForValue(desiredConductivity);
+
+                    arduinoPort.write(JSON.stringify(turnOffWaterWaterValve), function (error) {
+                        if (error) {
+                            console.log(error);
+                        }
+                    });
+
+                } catch (err) {
+                    console.log("Water change error");
+                    console.log(err);
+
+                } finally {
+                    // Turn back on dosing whether we succeed or not.
+                    functions.allowDosing = true;
+                }
+            } else {
+                console.log(`No need for a water change since the desired conductivity is greater than the current conductivity. ${functions.lastProbeValues.conductivity} < ${desiredConductivity} `)
+            }
+
+        } else {
+            console.log("Warning: Could not find conductivity in lastProbeValues.");
+        }
+
+        console.log(`Ending call to water change. Allowing dosing: ${functions.getAllowedDosing()}`);
+
+    },
+
+    "serialStartRead": () => {
 
         // const exampleJson = {
         //     "fsl": 0,  // Float switch status (lower)
@@ -54,6 +145,7 @@ const functions = {
             try {
                 const json = JSON.parse(data);
                 functions.slowValveLog(json);
+                functions.valveStatusObject = json; // This isn't the best, but Node is single thread, so there shouldn't be any read/write problems.  Right?
             } catch (exception) {
                 console.log("Json Parse Error:");
                 console.log(exception);
@@ -87,6 +179,7 @@ const functions = {
             objectToReturn[probe.name] = resultString;
         }
         i2c1.closeSync();
+        functions.lastProbeValues = objectToReturn;
         return objectToReturn;
     },
     "setupCronTabSchedule": () => {
@@ -117,6 +210,11 @@ const functions = {
 
     },
     "checkValuesAndRunDosingPumps": (reading) => {
+
+        if (!functions.getAllowedDosing()) {
+            console.log("Dosing is currently disabled.");
+            return;
+        }
 
         console.log(functions.timeToDoseAgain);
 

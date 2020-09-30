@@ -96,15 +96,15 @@
   },
   "water_change_scheduled": {
     "daily": {
-      "target_conductivity": 1300,
-      "cron_pattern": "0 15 17 * * 1,2,3,4,5",
-      "wait_before_next_dose": "15m",
+      "target_conductivity": 1320,
+      "cron_pattern": "0 0 17 * * 1,2,3,4,5",
+      "wait_before_next_dose": "20m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]
     },
     "weekly" : {
       "target_conductivity": 900,
       "cron_pattern": "0 0 13 * * 0",
-      "wait_before_next_dose": "15m",
+      "wait_before_next_dose": "20m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]
     }
   },

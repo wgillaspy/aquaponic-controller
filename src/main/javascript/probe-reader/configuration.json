@@ -37,11 +37,11 @@
         "wait_before_next_dose": "30m",
         "on_when": {
           "comparator": "<",
-          "value": 5.75
+          "value": 6.50
         },
         "off_when": {
           "comparator": ">",
-          "value": 5.8
+          "value": 6.55
         }
       },
       {
@@ -51,10 +51,10 @@
         "address": 94,
         "on_when": {
           "comparator": ">",
-          "value": 5.95
+          "value": 6.65
         },
         "wait_before_next_dose": "30m",
-        "amount_per_point": 8,
+        "amount_per_point": 6,
         "minimum_amount": 0.6,
         "max_amount": 10,
         "dose_over_time": 5,
@@ -68,12 +68,12 @@
         "address": 90,
         "on_when": {
           "comparator": "<",
-          "value": 1300
+          "value": 1000
         },
         "wait_before_next_dose": "30m",
         "amount_per_point": 0.2,
         "minimum_amount": 0.6,
-        "max_amount": 200,
+        "max_amount": 100,
         "dose_over_time": 20,
         "dose_over_time_when_greater_than": 15
       },
@@ -83,12 +83,12 @@
         "address": 92,
         "on_when": {
           "comparator": "<",
-          "value": 1300
+          "value": 1000
         },
         "wait_before_next_dose": "30m",
         "amount_per_point": 0.2,
         "minimum_amount": 0.6,
-        "max_amount": 200,
+        "max_amount": 100,
         "dose_over_time": 20,
         "dose_over_time_when_greater_than": 15
       }
@@ -96,15 +96,15 @@
   },
   "water_change_scheduled": {
     "daily": {
-      "target_conductivity": 1320,
+      "target_conductivity": 1010,
       "cron_pattern": "0 0 17 * * 1,2,3,4,5",
-      "wait_before_next_dose": "20m",
+      "wait_before_next_dose": "30m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]
     },
     "weekly" : {
-      "target_conductivity": 900,
+      "target_conductivity": 800,
       "cron_pattern": "0 0 13 * * 0",
-      "wait_before_next_dose": "20m",
+      "wait_before_next_dose": "30m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]
     }
   },
@@ -113,7 +113,7 @@
       "splunk_label": "nutrient_two",
       "control_type": "ezo-pmp",
       "address": 91,
-      "cron_pattern": "0 30 0,6,12,18 * * *",
+      "cron_pattern": "0 30 0 * * *",
       "amount": 10,
       "dose_over_time": 10
     },
@@ -121,7 +121,7 @@
       "splunk_label": "nutrient_four",
       "control_type": "ezo-pmp",
       "address": 93,
-      "cron_pattern": "0 30 1,7,13,18 * * *",
+      "cron_pattern": "0 30 1 * * *",
       "amount": 10,
       "dose_over_time": 10
     }

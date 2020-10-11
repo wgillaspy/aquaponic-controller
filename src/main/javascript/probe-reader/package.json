@@ -18,6 +18,7 @@
     "fs-extra": "^9.0.1",
     "i2c-bus": "^5.2.0",
     "moment": "^2.29.0",
-    "serialport": "^9.0.1"
+    "serialport": "^9.0.1",
+    "twilio": "^3.49.4"
   }
 }

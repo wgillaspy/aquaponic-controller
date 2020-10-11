@@ -517,7 +517,7 @@ const functions = {
         if (functions.debounceSMS[label]) {
 
             const compareMoment = moment().subtract(30, "m");  // Only allow one message per type every thirty minutes.
-            if (compareMoment.isAfter(debounce[label])) {
+            if (compareMoment.isAfter(functions.debounceSMS[label])) {
                 functions.debounceSMS[label] = moment();
                 return true;
             } else {

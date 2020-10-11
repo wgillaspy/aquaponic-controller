@@ -3,6 +3,10 @@
   "Name" : "/{{CONTAINER_NAME}}",
   "Hostname" : "{{CONTAINER_NAME}}",
   "Env": [
+    "TWILIO_SID={{TWILIO_SID}}",
+    "TWILIO_AUTH_TOKEN={{TWILIO_AUTH_TOKEN}}",
+    "TWILIO_TO={{TWILIO_TO}}",
+    "TWILIO_FROM={{TWILIO_FROM}}",
     "SPLUNK_URL={{SPLUNK_URL}}",
     "SPLUNK_TOKEN={{SPLUNK_TOKEN}}",
     "HUE_API_TOKEN={{HUE_API_TOKEN}}",

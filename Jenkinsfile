@@ -123,7 +123,11 @@ pipeline {
             steps {
                 script {
 
-                    withCredentials([string(credentialsId: 'SPLUNK_URL', variable: 'SPLUNK_URL'),
+                    withCredentials([string(credentialsId: 'TWILIO_SID', variable: 'TWILIO_SID'),
+                                     string(credentialsId: 'TWILIO_AUTH_TOKEN', variable: 'TWILIO_AUTH_TOKEN'),
+                                     string(credentialsId: 'TWILIO_TO', variable: 'TWILIO_TO'),
+                                     string(credentialsId: 'TWILIO_FROM', variable: 'TWILIO_FROM'),
+                                     string(credentialsId: 'SPLUNK_URL', variable: 'SPLUNK_URL'),
                                      string(credentialsId: 'SPLUNK_TOKEN', variable: 'SPLUNK_TOKEN'),
                                      string(credentialsId: 'HUE_API_TOKEN', variable: 'HUE_API_TOKEN'),
                                      dockerCert(credentialsId: 'DOCKER_AUTH_CERTS', variable: 'LOCAL_DOCKER_CERT_PATH')]) {

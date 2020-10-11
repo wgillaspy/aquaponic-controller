@@ -40,6 +40,7 @@ const functions = {
     "valveLogCount": 0,
     "valveStatusObject": {},
     "lastProbeValues": {},
+    "debounceSMS" : {},
     "allowDosing": true,
     "getAllowedDosing" : ()  => {
         return functions.allowDosing;
@@ -425,6 +426,10 @@ const functions = {
 
             const currentState = statusResult.data.state;
 
+            if (currentState === "unavailable") {
+                functions.sendSMS(configuration.entity_id, `Unable to get status of device: ${configuration.entity_id}`)
+            }
+
             if (currentState !== desiredState) {
 
                 let endpoint = "";
@@ -490,6 +495,40 @@ const functions = {
             return left == right;
         }
         return false;
+    },
+    "sendSMS" : async (label, message) => {
+
+        if (functions.allowSms(label)) {
+            const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+            await client.messages.create({
+                body: message,
+                to:  process.env.TWILIO_TO,
+                from:  process.env.TWILIO_FROM
+            }).then((result) => {
+                console.log(result);
+            }).catch((exception) => {
+                console.log(exception);
+            });
+        }
+    },
+    "allowSms" : (label) => {
+
+        if (functions.debounceSMS[label]) {
+
+            const compareMoment = moment().subtract(30, "m");  // Only allow one message per type every thirty minutes.
+            if (compareMoment.isAfter(debounce[label])) {
+                functions.debounceSMS[label] = moment();
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            functions.debounceSMS[label] = moment();
+            return true;
+        }
+
     }
 
 };

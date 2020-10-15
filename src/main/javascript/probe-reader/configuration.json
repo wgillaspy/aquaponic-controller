@@ -68,7 +68,7 @@
         "address": 90,
         "on_when": {
           "comparator": "<",
-          "value": 1000
+          "value": 1100
         },
         "wait_before_next_dose": "30m",
         "amount_per_point": 0.2,
@@ -83,7 +83,7 @@
         "address": 92,
         "on_when": {
           "comparator": "<",
-          "value": 1000
+          "value": 1100
         },
         "wait_before_next_dose": "30m",
         "amount_per_point": 0.2,
@@ -96,7 +96,7 @@
   },
   "water_change_scheduled": {
     "daily": {
-      "target_conductivity": 900,
+      "target_conductivity": 950,
       "cron_pattern": "0 0 17 * * 1,2,3,4,5",
       "wait_before_next_dose": "30m",
       "pause_labels": ["phosphoric_acid", "light.plug_four"]

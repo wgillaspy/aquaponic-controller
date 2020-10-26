@@ -5,8 +5,8 @@ const fs = require("fs-extra");
 
 
 const reading = {
-    "pH": "6.88",
-    "conductivity": "300"
+    "pH": "6.5",
+    "conductivity": "1300"
 };
 
 setInterval(() => {

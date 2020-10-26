@@ -40,11 +40,11 @@
           "value": 6.50
         },
         "wait_before_next_dose": "5m",
-        "amount_per_point": 600,
+        "amount_per_point": 900,
         "minimum_amount": 0.6,
         "max_amount": 50,
         "dose_over_time": 5,
-        "dose_over_time_when_greater_than": 3
+        "dose_over_time_when_greater_than": 51
       },
       {
         "splunk_label": "phosphoric_acid",

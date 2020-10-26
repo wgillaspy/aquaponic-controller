@@ -97,12 +97,6 @@
     ]
   },
   "water_change_scheduled": {
-    "daily": {
-      "target_conductivity": 1100,
-      "cron_pattern": "0 0 17 * * 1,2,3,4,5",
-      "wait_before_next_dose": "30m",
-      "pause_labels": ["phosphoric_acid", "kalkwasser"]
-    },
     "weekly" : {
       "target_conductivity": 500,
       "cron_pattern": "0 0 13 * * 0",

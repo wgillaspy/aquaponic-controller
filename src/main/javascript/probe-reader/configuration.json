@@ -39,8 +39,8 @@
           "comparator": "<",
           "value": 6.50
         },
-        "wait_before_next_dose": "10m",
-        "amount_per_point": 150,
+        "wait_before_next_dose": "5m",
+        "amount_per_point": 600,
         "minimum_amount": 0.6,
         "max_amount": 50,
         "dose_over_time": 5,

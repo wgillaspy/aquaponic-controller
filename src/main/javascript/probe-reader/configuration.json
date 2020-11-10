@@ -37,12 +37,12 @@
         "address": 95,
         "on_when": {
           "comparator": "<",
-          "value": 6.50
+          "value": 7.0
         },
         "wait_before_next_dose": "5m",
         "amount_per_point": 2100,
         "minimum_amount": 0.6,
-        "max_amount": 100,
+        "max_amount": 200,
         "dose_over_time": 5,
         "dose_over_time_when_greater_than": 101
       },
@@ -53,7 +53,7 @@
         "address": 94,
         "on_when": {
           "comparator": ">",
-          "value": 6.65
+          "value": 7.15
         },
         "wait_before_next_dose": "30m",
         "amount_per_point": 6,
